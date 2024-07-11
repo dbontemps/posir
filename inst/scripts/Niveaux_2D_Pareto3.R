@@ -49,7 +49,7 @@ for (n in c(50, 100, 200, 400)) {
   compute_error_levels(Ntrajmin, Ntraj_batch, Ndiscretisation, n, grilledelta,
                      positions, Nomgrilledeltafin, Nomgrilledeltainit,
                      Taillemaxbatch, sim_path, NameFQ = NULL,
-                     rDisName = "rCenteredPareto", NameDis = "Pareto3",
+                     rdistrib = rCenteredPareto, NameDis = "Pareto3",
                      d=dimension)
 }
 plan(sequential)

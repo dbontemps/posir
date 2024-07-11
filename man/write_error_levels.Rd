@@ -20,11 +20,7 @@ used in the Monte-Carlo estimation of the effective error levels.}
 
 \item{NameDis}{name, or short description (of type string),
 of the distribution of the i.i.d. random variables
-that are summed in the POSIR process.
-
-NameDis differs from rDisName, when this last parameter is also used,
-in such that rDisName is the name of the \code{Rcpp} or \code{R} function,
-while NameDis may be any string you choose.}
+that are summed in the POSIR process.}
 
 \item{d}{dimension parameter of the POSIR process (1 or 2).}
 }

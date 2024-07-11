@@ -13,7 +13,7 @@ run_simu(
   maxmatrixsize,
   sim_root_dir = "",
   NameBaseBatch = "Batch",
-  rDisName = "rnorm",
+  rdistrib = rnorm,
   NameDis = "Gaussian",
   is_standard = TRUE,
   d = 1,
@@ -40,15 +40,12 @@ stand for the current working directory.}
 \item{NameBaseBatch}{prefix (beginning) of the file name for batches,
 without the path. See \code{\link[=simulationDir]{simulationDir()}} for the directory used.}
 
-\item{rDisName}{name (string) of the distribution function.}
+\item{rdistrib}{distribution (Function) of the i.i.d. random variables
+that are summed in the POSIR process.}
 
 \item{NameDis}{name, or short description (of type string),
 of the distribution of the i.i.d. random variables
-that are summed in the POSIR process.
-
-NameDis differs from rDisName, when this last parameter is also used,
-in such that rDisName is the name of the \code{Rcpp} or \code{R} function,
-while NameDis may be any string you choose.}
+that are summed in the POSIR process.}
 
 \item{is_standard}{whether the POSIR process is to be standardized
 (in particular if the standard deviation of the distribution is not 1).}

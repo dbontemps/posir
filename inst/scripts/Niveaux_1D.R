@@ -33,7 +33,7 @@ library(future)
 logger::log_threshold(logger::DEBUG, namespace = "posir")
 
 myfun = function(n, positions, Nomgrilledeltafin,
-                 rDisName = "rCenteredPareto", NameDis = "Pareto3") {
+                 rdistrib = rCenteredPareto, NameDis = "Pareto3") {
   aux=grilledelta[positions]*n
   if(sum(abs(round(aux)-aux)<.001)<length(positions)) {
     print("ERREUR : grille pour delta incorrecte")
@@ -42,7 +42,7 @@ myfun = function(n, positions, Nomgrilledeltafin,
   compute_error_levels(Ntrajmin, Ntraj_batch, Ndiscretisation, n, grilledelta,
                        positions, Nomgrilledeltafin, Nomgrilledeltainit,
                        Taillemaxbatch, sim_path, NameFQ = NomfichierQuantiles,
-                       rDisName = rDisName, NameDis = NameDis,
+                       rdistrib = rdistrib, NameDis = NameDis,
                        d=dimension)
 }
 
@@ -54,7 +54,7 @@ plan(multisession, workers = Ncores)
 for(j in c(30, 50, 100, 400, 1000, 5000)) {
   myfun(n = j, positions = seq(1,181,20),
         Nomgrilledeltafin = "1to.1by.1",
-        rDisName = "rCenteredPareto", NameDis = "Pareto3")
+        rdistrib = rCenteredPareto, NameDis = "Pareto3")
 }
 plan(sequential)
 
@@ -69,7 +69,7 @@ LoiErreurs = function(j) {
 for(j in c(30, 50, 100, 400, 1000, 5000)) {
   myfun(n = j, positions = seq(1,181,20),
         Nomgrilledeltafin = "1to.1by.1",
-        rDisName = "LoiErreurs", NameDis = NomLoicourt)
+        rdistrib = LoiErreurs, NameDis = NomLoicourt)
 }
 
 # Idem avec une distribution de Laplace
@@ -79,7 +79,7 @@ rlaplace = function(j) {
 for(j in c(30, 50, 100, 400)) {
   myfun(n = j, positions = seq(1,181,20),
         Nomgrilledeltafin = "1to.1by.1",
-        rDisName = "rlaplace", NameDis = "Laplace")
+        rdistrib = rlaplace, NameDis = "Laplace")
 }
 
 # Pareto symétrisé avec discrétisation 100
@@ -93,7 +93,7 @@ for(j in c(30, 50, 100, 400)) {
 # }
 # myfun(n = 100, positions = seq(1,181,20),
 #       Nomgrilledeltafin = "1to.1by.1",
-#       rDisName = "LoiErreurs", NameDis = NomLoicourt)
+#       rdistrib = LoiErreurs, NameDis = NomLoicourt)
 
 # Pareto recentré avec discrétisation 100, différentes shapes
 for(shapepareto in c(2.1, 2.4, 4, 10)) { #shapepareto=3 déjà fait ailleurs
@@ -105,5 +105,5 @@ for(shapepareto in c(2.1, 2.4, 4, 10)) { #shapepareto=3 déjà fait ailleurs
   }
   myfun(n = 100, positions = seq(1,181,20),
         Nomgrilledeltafin = "1to.1by.1",
-        rDisName = "LoiErreurs", NameDis = NomLoicourt)
+        rdistrib = LoiErreurs, NameDis = NomLoicourt)
 }

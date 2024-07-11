@@ -15,10 +15,6 @@
 #' @param NameDis name, or short description (of type string),
 #' of the distribution of the i.i.d. random variables
 #' that are summed in the POSIR process.
-#'
-#' NameDis differs from rDisName, when this last parameter is also used,
-#' in such that rDisName is the name of the \code{Rcpp} or \code{R} function,
-#' while NameDis may be any string you choose.
 #' @param d dimension parameter of the POSIR process (1 or 2).
 #'
 #' @return Something similar to
@@ -103,7 +99,7 @@ batch_filename <- function(j, Ltot, NameBaseBatch) {
 #' @param Nbatch total number of batches planned in the simulation.
 #' @param Batchsize number of trajectories simulated in each batch.
 #' @param BaseNameF Base of the file name (with path) for the batches.
-#' @inheritParams random_C_or_R
+#' @inheritParams n_traj_simu
 #' @inheritParams write_batch
 #' @inheritParams simulationDir
 #' @inheritParams check_grid
@@ -123,11 +119,11 @@ batch_filename <- function(j, Ltot, NameBaseBatch) {
 #' BaseNameF <- paste(sim_dir, "/Batch50_1_", sep = "")
 #' run_batches_range(
 #'   1, 3, 20, 50, 100, seq(10, 1, -1) / 10, 10^6,
-#'   BaseNameF, "rnorm", TRUE, 2
+#'   BaseNameF, rnorm, TRUE, 2
 #' )
 #' withr::deferred_run(envir=sys.frame(sys.nframe()))
 run_batches_range <- function(beginpos, endpos, Nbatch, Batchsize, Ndis, deltagrid,
-                              maxmatrixsize, BaseNameF, rDisName,
+                              maxmatrixsize, BaseNameF, rdistrib,
                               is_standard, d, ErLev = .001) {
   if (beginpos != round(beginpos) || endpos != round(endpos) || Batchsize != round(Batchsize) ||
       Nbatch != round(Nbatch) || Ndis != round(Ndis)) {
@@ -163,7 +159,7 @@ run_batches_range <- function(beginpos, endpos, Nbatch, Batchsize, Ndis, deltagr
           c(
             "write_batch", "batch_filename", "n_traj_simu",
             "n_traj_simu_C", "check_grid", "BaseNameF", "Batchsize",
-            "Ltot", "Ndis", "deltagrid", "Nbatch", "maxmatrixsize", "rDisName",
+            "Ltot", "Ndis", "deltagrid", "Nbatch", "maxmatrixsize", "rdistrib",
             "is_standard", "d", "ErLev"
           )
       )
@@ -171,7 +167,7 @@ run_batches_range <- function(beginpos, endpos, Nbatch, Batchsize, Ndis, deltagr
     write_batch(
       Batchsize, batch_filename(j, Ltot, BaseNameF), Ndis, deltagrid,
       paste("Simulation of batch", toString(j), "among", toString(Nbatch)),
-      maxmatrixsize, rDisName, is_standard, d, ErLev
+      maxmatrixsize, rdistrib, is_standard, d, ErLev
     )
   } # par tout-à-fait future_compatible (write in parallelling...) FIXME
   T2 <- Sys.time()
@@ -192,7 +188,6 @@ run_batches_range <- function(beginpos, endpos, Nbatch, Batchsize, Ndis, deltagr
 #'
 #' @param NameF batch file name.
 #' @param message message to be printed if the files does not already exist.
-#' @inheritParams random_C_or_R
 #' @inheritParams n_traj_simu
 #' @inheritParams simulationDir
 #' @inheritParams check_grid
@@ -209,16 +204,16 @@ run_batches_range <- function(beginpos, endpos, Nbatch, Batchsize, Ndis, deltagr
 #'                               envir=sys.frame(sys.nframe()))
 #' write_batch(
 #'   50, paste(sim_dir,"Batch50_1_01.txt",sep="/"), 100, seq(10, 1, -1) / 10,
-#'   "go", 10^6, "rnorm", TRUE, 1, .001
+#'   "go", 10^6, rnorm, TRUE, 1, .001
 #' )
 #' withr::deferred_run(envir=sys.frame(sys.nframe()))
 #' }
 #' @keywords internal
 write_batch <- function(n, NameF, Ndis, deltagrid, message, maxmatrixsize,
-                        rDisName, is_standard, d, ErLev) {
+                        rdistrib, is_standard, d, ErLev) {
   if (!file.exists(NameF)) {
     log_info(message)
-    res = n_traj_simu(n, Ndis, deltagrid, maxmatrixsize, rDisName,
+    res = n_traj_simu(n, Ndis, deltagrid, maxmatrixsize, rdistrib,
                       is_standard, d, ErLev)
     write.table(res, NameF)
   }
@@ -233,7 +228,7 @@ write_batch <- function(n, NameF, Ndis, deltagrid, message, maxmatrixsize,
 #'
 #' @param Ntot initial number of trajectories planned to be simulated.
 #' @inheritParams run_batches_range
-#' @inheritParams random_C_or_R
+#' @inheritParams n_traj_simu
 #' @inheritParams write_batch
 #' @inheritParams simulationDir
 #' @inheritParams check_grid
@@ -254,7 +249,7 @@ write_batch <- function(n, NameF, Ndis, deltagrid, message, maxmatrixsize,
 #' run_simu(30, 10, 100, seq(10, 1, -1) / 10, "de 1 à .1", 10^6, sim_dir, d = 2)
 #' withr::deferred_run(envir=sys.frame(sys.nframe()))
 run_simu <- function(Ntot, Batchsize, Ndis, deltagrid, gridname, maxmatrixsize,
-                     sim_root_dir = "", NameBaseBatch = "Batch", rDisName = "rnorm",
+                     sim_root_dir = "", NameBaseBatch = "Batch", rdistrib = rnorm,
                      NameDis = "Gaussian", is_standard = TRUE, d = 1, ErLev = .001) {
   local_log_init(sim_root_dir)
   if (Ntot != round(Ntot) || Batchsize != round(Batchsize)) {
@@ -274,7 +269,7 @@ run_simu <- function(Ntot, Batchsize, Ndis, deltagrid, gridname, maxmatrixsize,
   )
   run_batches_range(
     1, Nbatch, Nbatch, Batchsize, Ndis, deltagrid, maxmatrixsize,
-    NameF, rDisName, is_standard, d, ErLev
+    NameF, rdistrib, is_standard, d, ErLev
   )
   j <- 0
   Z <- as.matrix(foreach(

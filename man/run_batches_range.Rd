@@ -13,7 +13,7 @@ run_batches_range(
   deltagrid,
   maxmatrixsize,
   BaseNameF,
-  rDisName,
+  rdistrib,
   is_standard,
   d,
   ErLev = 0.001
@@ -37,7 +37,8 @@ to be simultaneously simulated.}
 
 \item{BaseNameF}{Base of the file name (with path) for the batches.}
 
-\item{rDisName}{name (string) of the distribution function.}
+\item{rdistrib}{distribution (Function) of the i.i.d. random variables
+that are summed in the POSIR process.}
 
 \item{is_standard}{whether the POSIR process is to be standardized
 (in particular if the standard deviation of the distribution is not 1).}
@@ -59,7 +60,7 @@ sim_dir <- local_init_testing(dirNameBase = "run_batches_example",
 BaseNameF <- paste(sim_dir, "/Batch50_1_", sep = "")
 run_batches_range(
   1, 3, 20, 50, 100, seq(10, 1, -1) / 10, 10^6,
-  BaseNameF, "rnorm", TRUE, 2
+  BaseNameF, rnorm, TRUE, 2
 )
 withr::deferred_run(envir=sys.frame(sys.nframe()))
 }

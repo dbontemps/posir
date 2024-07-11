@@ -11,37 +11,52 @@
 #' [RcppArmadillo][RcppArmadillo::RcppArmadillo-package].
 #' See [n_traj_simu_1D] and [n_traj_simu_2D] for the R versions.
 #'
+#' @param n number of generated independent POSIR trajectories.
 #' @param deltagrid grid for \eqn{\delta}.
 #' @param maxmatrixsize maximum number of i.i.d. random variables
 #' to be simultaneously simulated.
+#' @param rdistrib distribution (Function) of the i.i.d. random variables
+#' that are summed in the POSIR process.
 #' @param is_standard whether the POSIR process is to be standardized
 #' (in particular if the standard deviation of the distribution is not 1).
-#' @inheritParams random_C_or_R
 #' @inheritParams simulationDir
 #' @inheritParams check_grid
 #' @seealso [run_simu()], [simulationDir()], [check_grid()], [batch_filename()]
 #' @family POSIR process generators
 #'
 #' @return A matrix with n lines and length(deltagrid) columns.
+#' @importFrom foreach foreach
 #' @export
 #'
 #' @examples
-#' n_traj_simu(50, 100, seq(10, 1, -1) / 10, 10^6, "rnorm", TRUE, 1)
-#' n_traj_simu(50, 100, seq(10, 1, -1) / 10, 10^6, "rCenteredPareto", FALSE, 2)
+#' n_traj_simu(50, 100, seq(10, 1, -1) / 10, 10^6, rnorm, TRUE, 1)
+#' n_traj_simu(50, 100, seq(10, 1, -1) / 10, 10^6, rCenteredPareto, FALSE, 2)
 n_traj_simu <- function(n, Ndis, deltagrid, maxmatrixsize,
-                        rDisName, is_standard, d, ErLev = .001) {
+                        rdistrib, is_standard, d, ErLev = .001) {
   if ((d == 1 && n * Ndis > maxmatrixsize) || (d == 2 && Ndis**2 > maxmatrixsize)) {
     log_n_stop("over memory limit", "in n_traj_simu().")
   }
-  if (d != 1 && d != 2) {
-    log_n_stop(
-      paste("unsupported dimension d=", toString(d), sep = ""),
-      "in n_traj_simu()."
-    )
-  }
-  gc() # pour libérer la mémoire...
+  #gc() # pour libérer la mémoire...
   Intdgrid <- check_grid(Ndis, deltagrid, ErLev)
-  Y <- n_traj_simu_C(n, Ndis, Intdgrid, rDisName, is_standard, d)
+  if(d==1) {
+    Y <- matrix(rdistrib(n*Ndis,n,Ndis))
+    Y <- n_traj_simu_1D_C(Y, Intdgrid, is_standard)
+    colnames(Y) <- deltagrid
+    return(Y)
+  }
+  if(d==2) {
+    Y <- foreach(i=1:n, .combine=rbind) %do% {
+      Z <- matrix(rdistrib(Ndis*Ndis,Ndis,Ndis))
+      n_traj_simu_2D_C(Z, Intdgrid, is_standard)
+    }
+    colnames(Y) <- deltagrid
+    return(Y)
+  }
+  # else
+  log_n_stop(
+    paste("unsupported dimension d=", toString(d), sep = ""),
+    "in n_traj_simu()."
+  )
   colnames(Y) <- deltagrid
   return(Y)
 }
@@ -58,8 +73,7 @@ n_traj_simu <- function(n, Ndis, deltagrid, maxmatrixsize,
 #' @inherit n_traj_simu params return
 #' @inheritParams simulationDir
 #' @inheritParams check_grid
-#' @param rdistrib distribution (Function) of the i.i.d. random variables
-#' that are summed in the POSIR process.
+#' @inheritParams n_traj_simu
 #' @seealso [run_simu()]
 #' @family POSIR process generators
 #'
@@ -112,7 +126,7 @@ n_traj_simu_1D <- function(n, Ndis, deltagrid, maxmatrixsize, rdistrib,
 #' @inherit n_traj_simu params return
 #' @inheritParams simulationDir
 #' @inheritParams check_grid
-#' @inheritParams n_traj_simu_1D
+#' @inheritParams n_traj_simu
 #' @seealso [run_simu()]
 #' @family POSIR process generators
 #'

@@ -22,39 +22,37 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
-// random_C_or_R
-arma::vec random_C_or_R(int n, std::string rDisName);
-RcppExport SEXP _posir_random_C_or_R(SEXP nSEXP, SEXP rDisNameSEXP) {
+// n_traj_simu_1D_C
+arma::mat n_traj_simu_1D_C(arma::mat const& Z, arma::ivec const& Intdgrid, bool is_standard);
+RcppExport SEXP _posir_n_traj_simu_1D_C(SEXP ZSEXP, SEXP IntdgridSEXP, SEXP is_standardSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type n(nSEXP);
-    Rcpp::traits::input_parameter< std::string >::type rDisName(rDisNameSEXP);
-    rcpp_result_gen = Rcpp::wrap(random_C_or_R(n, rDisName));
+    Rcpp::traits::input_parameter< arma::mat const& >::type Z(ZSEXP);
+    Rcpp::traits::input_parameter< arma::ivec const& >::type Intdgrid(IntdgridSEXP);
+    Rcpp::traits::input_parameter< bool >::type is_standard(is_standardSEXP);
+    rcpp_result_gen = Rcpp::wrap(n_traj_simu_1D_C(Z, Intdgrid, is_standard));
     return rcpp_result_gen;
 END_RCPP
 }
-// n_traj_simu_C
-arma::mat n_traj_simu_C(int n, int Ndis, arma::ivec Intdgrid, std::string rDisName, bool is_standard, int d);
-RcppExport SEXP _posir_n_traj_simu_C(SEXP nSEXP, SEXP NdisSEXP, SEXP IntdgridSEXP, SEXP rDisNameSEXP, SEXP is_standardSEXP, SEXP dSEXP) {
+// n_traj_simu_2D_C
+arma::vec n_traj_simu_2D_C(arma::mat const& Z, arma::ivec const& Intdgrid, bool is_standard);
+RcppExport SEXP _posir_n_traj_simu_2D_C(SEXP ZSEXP, SEXP IntdgridSEXP, SEXP is_standardSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type n(nSEXP);
-    Rcpp::traits::input_parameter< int >::type Ndis(NdisSEXP);
-    Rcpp::traits::input_parameter< arma::ivec >::type Intdgrid(IntdgridSEXP);
-    Rcpp::traits::input_parameter< std::string >::type rDisName(rDisNameSEXP);
+    Rcpp::traits::input_parameter< arma::mat const& >::type Z(ZSEXP);
+    Rcpp::traits::input_parameter< arma::ivec const& >::type Intdgrid(IntdgridSEXP);
     Rcpp::traits::input_parameter< bool >::type is_standard(is_standardSEXP);
-    Rcpp::traits::input_parameter< int >::type d(dSEXP);
-    rcpp_result_gen = Rcpp::wrap(n_traj_simu_C(n, Ndis, Intdgrid, rDisName, is_standard, d));
+    rcpp_result_gen = Rcpp::wrap(n_traj_simu_2D_C(Z, Intdgrid, is_standard));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
     {"_posir_log_n_stop_C", (DL_FUNC) &_posir_log_n_stop_C, 2},
-    {"_posir_random_C_or_R", (DL_FUNC) &_posir_random_C_or_R, 2},
-    {"_posir_n_traj_simu_C", (DL_FUNC) &_posir_n_traj_simu_C, 6},
+    {"_posir_n_traj_simu_1D_C", (DL_FUNC) &_posir_n_traj_simu_1D_C, 3},
+    {"_posir_n_traj_simu_2D_C", (DL_FUNC) &_posir_n_traj_simu_2D_C, 3},
     {NULL, NULL, 0}
 };
 

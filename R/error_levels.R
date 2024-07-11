@@ -106,7 +106,7 @@ write_error_levels <- function(levs, NameF, NameFQ, Ndis, Ntraj, NameDis, d) {
 #' from d, NdisQ, longdgrid_name, and filenamebasisQ.
 #' @param filenamebasisQ file name for the quantile table (without the path).
 #' @param filenamebasis file name for the error levels table (without the path).
-#' @inheritParams random_C_or_R
+#' @inheritParams n_traj_simu
 #' @inheritParams run_simu
 #' @inheritParams write_batch
 #' @inheritParams simulationDir
@@ -142,7 +142,7 @@ compute_error_levels <- function(Ntot, Batchsize, NdisQ, Ndis, deltagrid, posdel
                                  filenamebasisQ = "Table_quantiles.txt",
                                  filenamebasis = "Table_niveaux_effectifs.txt",
                                  NameBaseBatch = "Batch",
-                                 rDisName = "rCenteredPareto",
+                                 rdistrib = rCenteredPareto,
                                  NameDis = "Pareto3",
                                  precN = floor(log10(Ntot) / 2) + 2,
                                  d = 1, ErLev = .001) {
@@ -179,7 +179,7 @@ compute_error_levels <- function(Ntot, Batchsize, NdisQ, Ndis, deltagrid, posdel
   )
   if (!check_table_file(NameF, deltagrid[posdelta], nrow(Q))) {
     Z <- run_simu(Ntot, Batchsize, Ndis, deltagrid[posdelta], gridname,
-      maxmatrixsize, sim_root_dir, NameBaseBatch, rDisName, NameDis,
+      maxmatrixsize, sim_root_dir, NameBaseBatch, rdistrib, NameDis,
       is_standard = FALSE, d, ErLev
     )
     log_debug("compute_error_levels(): now to the error levels!")

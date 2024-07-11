@@ -21,47 +21,56 @@ log_n_stop_C <- function(message, m_details) {
     invisible(.Call(`_posir_log_n_stop_C`, message, m_details))
 }
 
-#' Random generation using Rcpp if possible, else a call to R
+#' Computation of a batch of trajectories of the 1D POSIR process
 #'
-#' Random generation according to a distribution.
-#' Calls the [Rcpp][Rcpp::Rcpp-package] function if rDisName is among the list
-#' {"rnorm", "runif", "rlnorm", "rCenterdPareto"},
-#' else calls the R Function with name rDisName.
+#' Implements the functional \eqn{G_\delta(\cdot)}
+#' from paper \insertCite{BaBoNe24}{posir}.
+#' Takes a matrix whose lines are from simulated white noise trajectories
+#' and computes from it the trajectories of the associated 1D POSIR process.
 #'
-#' @param n number of generated i.i.d. random variables.
-#' @param rDisName name (string) of the distribution function.
-#'
-#' @return A pseudo-random vector of length n.
-#' @export
-#'
-#' @examples
-#' random_C_or_R(10,"rnorm")
-#' myrdistrib=stats::rnorm
-#' random_C_or_R(10,"myrdistrib")
-random_C_or_R <- function(n, rDisName) {
-    .Call(`_posir_random_C_or_R`, n, rDisName)
-}
-
-#' Random simulation of trajectories of the 1D or 2D POSIR process
-#'
-#' Simulate n trajectories (as \eqn{\delta} decreases)
-#' of the (discretized) 1D or 2D POSIR process.
-#'
+#' @param Z matrix whose lines are simulated white noise trajectories.
 #' @param Intdgrid decreasing vector of the integers \eqn{1\le k\le Ndis}
-#' such that \eqn{k/Ndis} is in the grid for \eqn{\delta}.
+#' such that \eqn{k/Ndis} is in the grid for \eqn{\delta},
+#' where Ndis is the rows number of Z.
 #' Generally obtained as Ndis*deltagrid,
-#' where the vector dgrid is the desired grid for \eqn{\delta}.
+#' where the vector deltagrid is the desired grid for \eqn{\delta}.
 #' (Beware: no checking is done in this internal function.)
-#' @inheritParams random_C_or_R
 #' @inheritParams n_traj_simu
 #' @inheritParams simulationDir
 #' @inheritParams check_grid
 #' @seealso [run_simu()], [batch_filename()]
-#' @family POSIR process generators.
+#' @family POSIR process generators
 #'
-#' @return A matrix with n lines and length(grille) columns.
+#' @return A matrix with n lines and length(Intdgrid) columns.
+#'
+#' @references
+#'   \insertAllCited{}
 #' @keywords internal
-n_traj_simu_C <- function(n, Ndis, Intdgrid, rDisName, is_standard, d) {
-    .Call(`_posir_n_traj_simu_C`, n, Ndis, Intdgrid, rDisName, is_standard, d)
+n_traj_simu_1D_C <- function(Z, Intdgrid, is_standard) {
+    .Call(`_posir_n_traj_simu_1D_C`, Z, Intdgrid, is_standard)
+}
+
+#' Computation one trajectory of the 2D POSIR process
+#'
+#' Implements the 2D version of the functional \eqn{G_\delta(\cdot)}
+#' from paper \insertCite{BaBoNe24}{posir}.
+#' Takes a square matrix containing a simulated white noise 2D-sheet,
+#' and computes from it one trajectory of the associated 2D POSIR process.
+#'
+#' @param Z square matrix containing a simulated white noise 2D-sheet.
+#' @inheritParams n_traj_simu_1D_C
+#' @inheritParams n_traj_simu
+#' @inheritParams simulationDir
+#' @inheritParams check_grid
+#' @seealso [run_simu()], [batch_filename()]
+#' @family POSIR process generators
+#'
+#' @return A vector with length(Intdgrid) elements.
+#'
+#' @references
+#'   \insertAllCited{}
+#' @keywords internal
+n_traj_simu_2D_C <- function(Z, Intdgrid, is_standard) {
+    .Call(`_posir_n_traj_simu_2D_C`, Z, Intdgrid, is_standard)
 }
 

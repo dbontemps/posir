@@ -24,9 +24,9 @@ for discretized, possibly non-Gaussian, POSIR processes.
 \item \link{compute_quantiles}
 \item \link{extract_error_levels}
 \item \link{extract_quantiles}
-\item \link{n_traj_simu}, et ses versions \code{R} \link{n_traj_simu_1D} et \link{n_traj_simu_2D}
+\item \link{n_traj_simu}, et ses versions \code{R}
+\link{n_traj_simu_1D_C} et \link{n_traj_simu_2D_C}
 \item \link{rCenteredPareto}
-\item \link{random_C_or_R}
 \item \link{run_simu}
 }
 }

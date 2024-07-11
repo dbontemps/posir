@@ -9,14 +9,14 @@ n_traj_simu(
   Ndis,
   deltagrid,
   maxmatrixsize,
-  rDisName,
+  rdistrib,
   is_standard,
   d,
   ErLev = 0.001
 )
 }
 \arguments{
-\item{n}{number of generated i.i.d. random variables.}
+\item{n}{number of generated independent POSIR trajectories.}
 
 \item{Ndis}{discretisation parameter of the POSIR process.}
 
@@ -25,7 +25,8 @@ n_traj_simu(
 \item{maxmatrixsize}{maximum number of i.i.d. random variables
 to be simultaneously simulated.}
 
-\item{rDisName}{name (string) of the distribution function.}
+\item{rdistrib}{distribution (Function) of the i.i.d. random variables
+that are summed in the POSIR process.}
 
 \item{is_standard}{whether the POSIR process is to be standardized
 (in particular if the standard deviation of the distribution is not 1).}
@@ -47,14 +48,16 @@ This version calls to C++ written code, with \link[Rcpp:Rcpp-package]{Rcpp} and
 See \link{n_traj_simu_1D} and \link{n_traj_simu_2D} for the R versions.
 }
 \examples{
-n_traj_simu(50, 100, seq(10, 1, -1) / 10, 10^6, "rnorm", TRUE, 1)
-n_traj_simu(50, 100, seq(10, 1, -1) / 10, 10^6, "rCenteredPareto", FALSE, 2)
+n_traj_simu(50, 100, seq(10, 1, -1) / 10, 10^6, rnorm, TRUE, 1)
+n_traj_simu(50, 100, seq(10, 1, -1) / 10, 10^6, rCenteredPareto, FALSE, 2)
 }
 \seealso{
 \code{\link[=run_simu]{run_simu()}}, \code{\link[=simulationDir]{simulationDir()}}, \code{\link[=check_grid]{check_grid()}}, \code{\link[=batch_filename]{batch_filename()}}
 
 Other POSIR process generators: 
+\code{\link{n_traj_simu_1D_C}()},
 \code{\link{n_traj_simu_1D}()},
+\code{\link{n_traj_simu_2D_C}()},
 \code{\link{n_traj_simu_2D}()}
 }
 \concept{POSIR process generators}

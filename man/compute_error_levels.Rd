@@ -19,7 +19,7 @@ compute_error_levels(
   filenamebasisQ = "Table_quantiles.txt",
   filenamebasis = "Table_niveaux_effectifs.txt",
   NameBaseBatch = "Batch",
-  rDisName = "rCenteredPareto",
+  rdistrib = rCenteredPareto,
   NameDis = "Pareto3",
   precN = floor(log10(Ntot)/2) + 2,
   d = 1,
@@ -65,15 +65,12 @@ from d, NdisQ, longdgrid_name, and filenamebasisQ.}
 \item{NameBaseBatch}{prefix (beginning) of the file name for batches,
 without the path. See \code{\link[=simulationDir]{simulationDir()}} for the directory used.}
 
-\item{rDisName}{name (string) of the distribution function.}
+\item{rdistrib}{distribution (Function) of the i.i.d. random variables
+that are summed in the POSIR process.}
 
 \item{NameDis}{name, or short description (of type string),
 of the distribution of the i.i.d. random variables
-that are summed in the POSIR process.
-
-NameDis differs from rDisName, when this last parameter is also used,
-in such that rDisName is the name of the \code{Rcpp} or \code{R} function,
-while NameDis may be any string you choose.}
+that are summed in the POSIR process.}
 
 \item{precN}{how many decimals for the effective error level estimations
 (used in particular in exporting the table to a file).}

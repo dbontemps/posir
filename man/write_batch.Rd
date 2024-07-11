@@ -11,14 +11,14 @@ write_batch(
   deltagrid,
   message,
   maxmatrixsize,
-  rDisName,
+  rdistrib,
   is_standard,
   d,
   ErLev
 )
 }
 \arguments{
-\item{n}{number of generated i.i.d. random variables.}
+\item{n}{number of generated independent POSIR trajectories.}
 
 \item{NameF}{batch file name.}
 
@@ -31,7 +31,8 @@ write_batch(
 \item{maxmatrixsize}{maximum number of i.i.d. random variables
 to be simultaneously simulated.}
 
-\item{rDisName}{name (string) of the distribution function.}
+\item{rdistrib}{distribution (Function) of the i.i.d. random variables
+that are summed in the POSIR process.}
 
 \item{is_standard}{whether the POSIR process is to be standardized
 (in particular if the standard deviation of the distribution is not 1).}
@@ -52,7 +53,7 @@ sim_dir <- local_init_testing(dirNameBase = "posir_test",
                               envir=sys.frame(sys.nframe()))
 write_batch(
   50, paste(sim_dir,"Batch50_1_01.txt",sep="/"), 100, seq(10, 1, -1) / 10,
-  "go", 10^6, "rnorm", TRUE, 1, .001
+  "go", 10^6, rnorm, TRUE, 1, .001
 )
 withr::deferred_run(envir=sys.frame(sys.nframe()))
 }
