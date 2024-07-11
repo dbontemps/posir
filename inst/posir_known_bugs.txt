@@ -1,0 +1,8 @@
+
+# known bugs of R-package posir
+
+## Le logging ne fonctione pas en multicoeur (pour les messages de logs produits dans les "futures")
+
+## L'utilisation d'une fonction R pour la simulation ne fonctionne pas en multicoeur (probablement la fonction R n'est pas transmise aux environnements des threads multicoeurs)
+
+

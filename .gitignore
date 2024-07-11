@@ -47,3 +47,10 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# Others
+.gitconfig
+*.so
+*.o
+*.dll
+

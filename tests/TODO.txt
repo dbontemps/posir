@@ -1,0 +1,7 @@
+# État des lieux
+
+## 6 février 2024
+
+Les tests ont été écrits pour 2 fonctions... sur 31 !
+
+
