@@ -2,13 +2,13 @@ Package: posir
 Type: Package
 Title: Simulations of 1D and 2D POSIR processes, quantiles, and CI
     effective error levels
-Version: 0.1.1.9008
-Author: Dominique Bontemps
+Version: 0.1.1.9009
+Author: Dominique Bontemps <dominique.bontemps@math.univ-toulouse.fr>
 Maintainer: Dominique Bontemps <dominique.bontemps@math.univ-toulouse.fr>
 Description: Simulation of trajectories of 1D or 2D POSIR processes,
     estimation of quantiles as well as effective error levels of
     confidence intervals.
-License: LGPL (>= 3)
+License: MIT + file LICENSE
 Depends:
     R (>= 3.5.0)
 Imports: 
@@ -33,6 +33,7 @@ LinkingTo:
     RcppArmadillo
 RdMacros: 
     Rdpack
+SystemRequirements: C++11
 Config/testthat/edition: 3
 Encoding: UTF-8
 LazyData: true
