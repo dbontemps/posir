@@ -39,17 +39,18 @@ n_traj_simu <- function(n, Ndis, deltagrid, maxmatrixsize,
   #gc() # pour libérer la mémoire...
   Intdgrid <- check_grid(Ndis, deltagrid, ErLev)
   if(d==1) {
-    Y <- matrix(rdistrib(n*Ndis,n,Ndis))
-    Y <- n_traj_simu_1D_C(Y, Intdgrid, is_standard)
+    Y <- n_traj_simu_1D_C(matrix(rdistrib(n*Ndis),n,Ndis),
+                          Intdgrid, is_standard)
     colnames(Y) <- deltagrid
     return(Y)
   }
   if(d==2) {
     Y <- foreach(i=1:n, .combine=rbind) %do% {
-      Z <- matrix(rdistrib(Ndis*Ndis,Ndis,Ndis))
-      n_traj_simu_2D_C(Z, Intdgrid, is_standard)
+      n_traj_simu_2D_C(matrix(rdistrib(Ndis*Ndis),Ndis,Ndis),
+                       Intdgrid, is_standard)
     }
     colnames(Y) <- deltagrid
+    rownames(Y) <- 1:n
     return(Y)
   }
   # else

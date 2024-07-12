@@ -81,7 +81,7 @@ arma::mat n_traj_simu_1D_C(arma::mat const & Z, arma::ivec const & Intdgrid,
  *
  * See n_traj_simu_1D_C() above for further details.
  */
-arma::vec n_traj_simu_2D_C(arma::mat const & Z, arma::ivec const & Intdgrid,
+NumericVector n_traj_simu_2D_C(arma::mat const & Z, arma::ivec const & Intdgrid,
                            bool is_standard);
 
 

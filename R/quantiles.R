@@ -136,7 +136,7 @@ compute_quantiles <- function(Ntot, Batchsize, Ndis, deltagrid, gridname,
     Z <- run_simu(
       Ntot, Batchsize, Ndis, deltagrid,
       gridname, maxmatrixsize, sim_root_dir, NameBaseBatch,
-      "rnorm", "Gaussian", TRUE,
+      rnorm, "Gaussian", TRUE,
       d, ErLev
     )
     log_info("Sorting now the trajectories")

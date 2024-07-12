@@ -146,21 +146,27 @@ double max2Dwindow(arma::mat const & cummat, int N, int i, int j) {
 //'   \insertAllCited{}
 //' @keywords internal
 // [[Rcpp::export]]
-arma::vec n_traj_simu_2D_C(arma::mat const & Z, arma::ivec const & Intdgrid,
-                           bool is_standard) {
+NumericVector n_traj_simu_2D_C(arma::mat const & Z,
+                               arma::ivec const & Intdgrid,
+                               bool is_standard) {
   if(Z.n_rows!=Z.n_cols) {
     log_n_stop_C("n_traj_simu_2D_C(): Z is not a square matrix", "");
   }
   int l=Intdgrid.n_elem, k, i, j, Ndis=Z.n_rows;
   int prev_pos=Ndis, next_pos ;
   double s;
-  arma::vec res(l);
-  arma::mat Y(Ndis+1, Ndis+1) ;
+  NumericVector res(l);
+  arma::mat Y ;
+  if(!is_standard) {
+    Y = Z;
+    Y.reshape(Ndis*Ndis,1);
+    s = as_scalar(stddev(Y,0,0)) ;
+  }
+  Y.set_size(Ndis+1, Ndis+1);
   Y.submat(0, 0, 0, Ndis).zeros();
   Y.submat(1, 0, Ndis, 0).zeros();
   Y.submat(1,1, Ndis, Ndis) = cumsum(cumsum(Z, 0), 1);
   if(!is_standard) {
-    s = as_scalar(stddev(Z,0,0)) ;
     Y = Y/s;
   }
   s = std::abs(Y(Ndis,Ndis))/Ndis ;

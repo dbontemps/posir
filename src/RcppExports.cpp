@@ -36,7 +36,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // n_traj_simu_2D_C
-arma::vec n_traj_simu_2D_C(arma::mat const& Z, arma::ivec const& Intdgrid, bool is_standard);
+NumericVector n_traj_simu_2D_C(arma::mat const& Z, arma::ivec const& Intdgrid, bool is_standard);
 RcppExport SEXP _posir_n_traj_simu_2D_C(SEXP ZSEXP, SEXP IntdgridSEXP, SEXP is_standardSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;

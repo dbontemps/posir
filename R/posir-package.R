@@ -5,7 +5,7 @@
 #' posir
 #'
 #' @name posir-package
-#' @docType package
+# #' @docType package
 #' @import rlang
 #' @importFrom glue glue
 #' @importFrom lifecycle deprecated
