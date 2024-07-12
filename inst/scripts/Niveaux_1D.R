@@ -50,7 +50,7 @@ myfun = function(n, positions, Nomgrilledeltafin,
 
 plan(multisession, workers = Ncores)
 
-# différentes discrétisations pour Pareto3 # le seul simulé en C
+# différentes discrétisations pour Pareto3
 for(j in c(30, 50, 100, 400, 1000, 5000)) {
   myfun(n = j, positions = seq(1,181,20),
         Nomgrilledeltafin = "1to.1by.1",
@@ -58,18 +58,13 @@ for(j in c(30, 50, 100, 400, 1000, 5000)) {
 }
 plan(sequential)
 
-xm=1
-shapepareto = 2.1
-NomLoicourt = paste("Pareto",toString(shapepareto),sep="")
-LoiErreurs = function(j) {
-  return(EnvStats::rpareto(j, location=xm, shape=shapepareto)
-         -(shapepareto*xm/(shapepareto-1)) # *(2*rbinom(j,size=1,prob=.5)-1)
-  )
-}
-for(j in c(30, 50, 100, 400, 1000, 5000)) {
+for(j in c(30, 50, 100, 400, 1000, 5000, 10000, 20000)) {
   myfun(n = j, positions = seq(1,181,20),
         Nomgrilledeltafin = "1to.1by.1",
-        rdistrib = LoiErreurs, NameDis = NomLoicourt)
+        rdistrib = function(k) {
+          return(EnvStats::rpareto(k, location=1, shape=2.1) - (2.1/(2.1-1)))
+        },
+        NameDis = "Pareto2.1")
 }
 
 # Idem avec une distribution de Laplace
@@ -96,14 +91,12 @@ for(j in c(30, 50, 100, 400)) {
 #       rdistrib = LoiErreurs, NameDis = NomLoicourt)
 
 # Pareto recentré avec discrétisation 100, différentes shapes
-for(shapepareto in c(2.1, 2.4, 4, 10)) { #shapepareto=3 déjà fait ailleurs
-  NomLoicourt = paste("Pareto",toString(shapepareto),sep="")
-  LoiErreurs = function(j) {
-    return(EnvStats::rpareto(j, location=xm, shape=shapepareto)
-           -(shapepareto*xm/(shapepareto-1)) # *(2*rbinom(j,size=1,prob=.5)-1)
-    )
-  }
+for(shapepareto in c(2.4, 4, 10)) { #shapepareto=2.1 et 3 déjà faits ailleurs
   myfun(n = 100, positions = seq(1,181,20),
         Nomgrilledeltafin = "1to.1by.1",
-        rdistrib = LoiErreurs, NameDis = NomLoicourt)
+        rdistrib = function(j) {
+          return(EnvStats::rpareto(j, location=1, shape=shapepareto)
+                 -(shapepareto/(shapepareto-1)) # *(2*rbinom(j,size=1,prob=.5)-1)
+          )
+        }, NameDis = paste("Pareto",toString(shapepareto),sep=""))
 }
