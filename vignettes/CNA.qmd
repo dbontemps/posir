@@ -1,0 +1,80 @@
+---
+title: "Simulating DNA copy number signals"
+author: "P. Neuvial"
+format:
+  html:
+    embed-resources: true
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup}
+library("jointseg")
+```
+
+Generate data with known truth:
+
+> for simplicity, only have two types of regions: one is centered around 0 and corresponds to 2 DNA copies (normal region), the other one corresponds to 3 DNA copies (region with a copy number alteration, CNA). The latter is not centered around 1 for biological/experimental reasons.
+
+```{r signal}
+## load known real copy number regions
+affyDat <- acnr::loadCnRegionData(dataSet="GSE29172", tumorFraction=1)
+dat <- subset(affyDat, region %in% c("(1,1)", "(1,2)"))
+baseline <- mean(subset(dat, region == "(1,1)")$c) # mean of normal region
+
+## generate a synthetic CN profile
+K <- 10
+n <- 1e4
+sim <- getCopyNumberDataByResampling(n, K, regData=dat, minLength = 100)
+true_bkp <- sim$bkp
+
+Y <- sim$profile$c - baseline  # Center the signal
+plotSeg(Y, breakpoints = true_bkp)
+```
+
+
+Segment (asking for twice as many segments as the true value)
+
+```{r segmentation}
+seg <- doDynamicProgramming(Y, K = 2*K)
+seg$bkp
+plotSeg(Y, breakpoints = seg$bkp)
+```
+
+Model selection (based on residual squared error of nested models)
+
+```{r model-selection}
+RSE <- seg$dpseg$rse
+sel <- modelSelection(RSE, n = n, method = "Lebarbier")
+bkp <- seg$dpseg$bkp[[sel$kbest]]
+plotSeg(Y, breakpoints = list(true_bkp, bkp))
+```
+
+
+Empirical mean for each segment
+
+```{r segement-mean}
+bx <- c(0, true_bkp, n) + 0.5
+seg_means <- matrixStats::binMeans(Y, x = seq(along = Y), bx = bx)
+seg_counts <- matrixStats::binCounts(x = seq(along = Y), bx = bx)
+stopifnot(sum(seg_counts) == n)
+```
+
+```{r}
+sigma_hat <- estimateSd(Y)
+```
+
+
+Now we can build a confidence interval for the mean of each segment (assuming gaussianity for the data)
+
+```{r conf-int}
+delta <- 10/n
+the_quantile <- 1.96
+upper <- seg_means + sigma_hat/sqrt(seg_counts)*the_quantile
+less <- seg_means - sigma_hat/sqrt(seg_counts)*the_quantile #...
+```
+
+## References
+
+Pierre-Jean, M., Rigaill, G., & Neuvial, P. (2015). Performance evaluation of DNA copy number segmentation methods. Briefings in bioinformatics, 16(4), 600-615.
+https://pubmed.ncbi.nlm.nih.gov/25202135/
