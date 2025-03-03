@@ -5,6 +5,11 @@ pkg.env <- new.env()
 pkg.env$cur.log.dir <- NULL
 pkg.env$cur.log.file <- NULL
 pkg.env$cur.do.tee <- FALSE
+
+# POSIR processes quantiles tables
+pkg.qtables <- list(NULL,NULL)
+load_quantiles()
+
 ## Suite ne fonctionne pas FIXME
 # Pour le moment :
 #logger::log_threshold(logger::DEBUG, namespace = "posir")

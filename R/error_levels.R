@@ -157,22 +157,28 @@ compute_error_levels <- function(Ntot, Batchsize, NdisQ, Ndis, deltagrid, posdel
   } else {
     aux <- NameFQ
   }
-  if (!file.exists(aux)) {
-    log_n_stop(
-      paste("Not found quantile table", aux),
-      "in compute_error_levels()."
-    )
+  # if (!file.exists(aux)) {
+  #   log_n_stop(
+  #     paste("Not found quantile table", aux),
+  #     "in compute_error_levels()."
+  #   )
+  # }
+  # Q <- as.matrix(read.table(aux))
+  # titles <- paste("X", sapply(deltagrid, toString), sep = "")
+  # l <- length(deltagrid)
+  # if (dim(Q)[2] != l || sum(colnames(Q) == titles) < l) {
+  #   log_n_stop(
+  #     "not matching delta grid in quantile table",
+  #     "in compute_error_levels()."
+  #   )
+  # }
+  # colnames(Q) <- deltagrid
+  Q <- read_quantiles(aux)
+  if(is.null(Q) || dim(Q)[2] != length(deltagrid) ||
+     sum(colnames(Q) == deltagrid) < length(deltagrid)) {
+    log_n_stop("Invalid quantiles table in compute_error_levels().")
   }
-  Q <- as.matrix(read.table(aux))
-  titles <- paste("X", sapply(deltagrid, toString), sep = "")
-  l <- length(deltagrid)
-  if (dim(Q)[2] != l || sum(colnames(Q) == titles) < l) {
-    log_n_stop(
-      "not matching delta grid in quantile table",
-      "in compute_error_levels()."
-    )
-  }
-  colnames(Q) <- deltagrid
+  #
   NameF <- paste(simulationDir(sim_root_dir, Ndis, gridname, NameDis, d),
     filenamebasis,
     sep = "/"
