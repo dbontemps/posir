@@ -18,6 +18,18 @@ file_with_path_name <- function(path_dir, file_without_path) {
   return(fileN)
 }
 
+#' Gets the path to the "inst" sub-directory of posir
+#'
+#' @keywords internal
+get_inst_posir_path <- function() {
+  curwd <- getwd()
+  if (substring(curwd, nchar(curwd)-5) == "/posir") {
+    curwd <- paste(curwd, "inst", sep = "/")
+    if (dir.exists(curwd)) return(curwd)
+  }
+  return(find.package("posir"))
+}
+
 #' Find the path to a file in the SavedOutputs sub-directory
 #'
 #' In the [posir] tree, the SavedOutputs sub-directory is used for testing;
@@ -44,12 +56,7 @@ file_with_path_name <- function(path_dir, file_without_path) {
 #' }
 #' @keywords internal
 find_Outputs_file <- function(OutputFN, do_warn = TRUE) {
-  curwd <- getwd()
-  if (substring(curwd, nchar(curwd)-5) == "/posir") {
-    res <- paste(curwd, "inst/SavedOutputs", sep = "/")
-  } else {
-    res <- paste(find.package("posir"), "SavedOutputs", sep = "/")
-  }
+  res <- paste(get_inst_posir_path(), "SavedOutputs", sep = "/")
   if (OutputFN == "" || substr(OutputFN, 1, 1) == "/") {
     res <- paste(res, OutputFN, sep = "")
   } else {
