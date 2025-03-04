@@ -2,7 +2,7 @@
 % Please edit documentation in R/varia.R
 \name{find_Outputs_file}
 \alias{find_Outputs_file}
-\title{Find the path to a file in the SavedOutputs sub-directory}
+\title{Find the path to a file in the "extdata/SavedOutputs" directory}
 \usage{
 find_Outputs_file(OutputFN, do_warn = TRUE)
 }
@@ -15,15 +15,12 @@ find_Outputs_file(OutputFN, do_warn = TRUE)
 the path to the saved file.
 }
 \description{
-In the \link{posir} tree, the SavedOutputs sub-directory is used for testing;
+In the \link{posir} tree, the SavedOutputs directory is used for testing;
 it contains mainly .RData files and some .txt ones,
 which each store the desired returns of some function,
 or a toy dataset to be passed as argument.
 }
 \details{
-When not installed, SavedOutputs is a subdirectory of "posir/inst/";
-when installed, SavedOutputs is a subdirectory of "posir/".
-
 find_Outputs_file() is a dev tool function,
 probably destined to later disappear or at least be rewritten.
 For now, it only works on my computers...

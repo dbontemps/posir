@@ -27,9 +27,9 @@ logger::log_info("Running examples for log_in_dir()",
 fileName = "mylog.log"
 sim_dir = local_init_testing(dirNameBase = "posir_test", logFN = fileName,
                               do_log=FALSE, envir=sys.frame(sys.nframe()))
-olddir = pkg.env$cur.log.dir
-oldfile = pkg.env$cur.log.file
-olddotee = pkg.env$cur.do.tee
+olddir <- pkg.env$cur.log.dir
+oldfile <- pkg.env$cur.log.file
+olddotee <- pkg.env$cur.do.tee
 myfile = log_in_dir(sim_dir, fileName, TRUE)
 logger::log_info(
   paste("We are logging in dir ", sim_dir,

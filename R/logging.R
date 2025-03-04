@@ -85,9 +85,9 @@ log_n_stop <- function(message, m_details = "") {
 #' fileName = "mylog.log"
 #' sim_dir = local_init_testing(dirNameBase = "posir_test", logFN = fileName,
 #'                               do_log=FALSE, envir=sys.frame(sys.nframe()))
-#' olddir = pkg.env$cur.log.dir
-#' oldfile = pkg.env$cur.log.file
-#' olddotee = pkg.env$cur.do.tee
+#' olddir <- pkg.env$cur.log.dir
+#' oldfile <- pkg.env$cur.log.file
+#' olddotee <- pkg.env$cur.do.tee
 #' myfile = log_in_dir(sim_dir, fileName, TRUE)
 #' logger::log_info(
 #'   paste("We are logging in dir ", sim_dir,
@@ -123,9 +123,9 @@ log_in_dir <- function(sim_dir, logFN, do_tee) {
       log_appender(force(appender_file(myfile)), namespace = "posir")
     }
   }
-  pkg.env$cur.log.dir = sim_dir
-  pkg.env$cur.log.file = logFN
-  pkg.env$cur.do.tee = do_tee
+  pkg.env$cur.log.dir <- sim_dir
+  pkg.env$cur.log.file <- logFN
+  pkg.env$cur.do.tee <- do_tee
   if(is.null(myfile)) {
     log_debug("Have set up logging in console")
     log_debug("in log_in_dir().")
@@ -147,9 +147,9 @@ log_in_dir <- function(sim_dir, logFN, do_tee) {
 #' @keywords internal
 local_log_init <- function(sim_dir=getwd(), logFN = "posir.log",
                            do_tee = TRUE, envir = parent.frame()) {
-  olddir = pkg.env$cur.log.dir
-  oldfile = pkg.env$cur.log.file
-  olddotee = pkg.env$cur.do.tee
+  olddir <- pkg.env$cur.log.dir
+  oldfile <- pkg.env$cur.log.file
+  olddotee <- pkg.env$cur.do.tee
   if(sim_dir!=olddir || logFN!=oldfile || do_tee!=olddotee) {
     if(!is.null(olddir)) log_debug(paste("Old logging dir:",olddir))
     log_debug(paste("Setting up logging in file",

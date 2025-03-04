@@ -47,10 +47,10 @@ in the presence of a white noise.
 }
 
 \section{Simulations results}{
-The folder "scripts" in the posir package installation path
+The folder "extdata/scripts/" in the posir package installation path
 contains the codes used to perform simulations
 for the paper \insertCite{BaBoNe24}{posir},
-while the file "results.zip" contains the obtained results.
+while the file "extdata/results.zip" contains the obtained results.
 }
 
 \references{

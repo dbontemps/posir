@@ -19,7 +19,7 @@ if not the function log a warning and returns NULL.
 }
 \examples{
 mypathQ <- paste(find.package("posir"),
-  "/SavedOutputs/QTable_1040_10080.txt",
+  "/extdata/SavedOutputs/QTable_1040_10080.txt",
   sep = ""
 )
 read_quantiles(mypathQ)

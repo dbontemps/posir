@@ -11,7 +11,7 @@
 #'
 #' @examples
 #' mypathQ <- paste(find.package("posir"),
-#'   "/SavedOutputs/QTable_1040_10080.txt",
+#'   "/extdata/SavedOutputs/QTable_1040_10080.txt",
 #'   sep = ""
 #' )
 #' read_quantiles(mypathQ)
@@ -44,12 +44,10 @@ read_quantiles <- function(NameF) {
 #' @keywords internal
 load_quantiles <- function() {
   base_path <- paste(get_inst_posir_path(),
-                     "/Results/Table_quantiles_", sep="")
+                     "/extdata/Table_quantiles_", sep="")
   for(i in 1:2) {
-    if(is.null(pkg.qtables[[i]])) log_warn("***")
-    pkg.qtables[[i]] <- read_quantiles(paste(
+    pkg.env$qtables[[i]] <- read_quantiles(paste(
       base_path, toString(i), "D.txt", sep=""))
-    if(is.null(pkg.qtables[[i]])) log_n_stop("...")
   }
 }
 
@@ -58,7 +56,9 @@ load_quantiles <- function() {
 #'
 #' Extrapolates a quantile from a previous table of (estimated) quantiles.
 #'
-#' @param p vector of probabilities.
+#' @param alpha vector of queue probabilities;
+#' usually a vector p of probabilities is used in such function,
+#' but due to legacy code, here alpha == 1 - p. # FIXME
 #' @param delta vector of delta parameters.
 #' @param d dimension: currently 1 and 2 are supported.
 #' @param Qtable a table of (estimated) quantiles for a POSIR process;
@@ -73,21 +73,20 @@ load_quantiles <- function() {
 #'
 #' @examples
 #' mypathQ <- paste(find.package("posir"),
-#'   "/SavedOutputs/QTable_1040_10080.txt",
+#'   "/extdata/SavedOutputs/QTable_1040_10080.txt",
 #'   sep = ""
 #' )
 #' qposir(NULL, .25, Qtable = read_quantiles(mypathQ))
-qposir <- function(p, delta, d=1, Qtable=NULL) {
+qposir <- function(alpha, delta, d=1, Qtable=NULL) {
   if(is.null(Qtable)) {
     if(d != 1 && d!=2) log_n_stop("Currently unsupported dimension")
-    if(is.null(pkg.qtables[[d]])) load_quantiles()
-    if(is.null(pkg.qtables[[d]])) log_n_stop("???")
-    Qtable <- pkg.qtables[[d]]
+    if(is.null(pkg.env$qtables[[d]])) load_quantiles()
+    Qtable <- pkg.env$qtables[[d]]
     if(is.null(Qtable))
       log_n_stop("The pre-compiled quantiles table could not be loaded")
   }
   alphagrid <- as.numeric(rownames(Qtable))
-  if(is.null(p)) p <- alphagrid
+  if(is.null(alpha)) alpha <- alphagrid
   deltagrid <- as.numeric(colnames(Qtable))
   if(is.null(delta)) delta <- deltagrid
   # Without interpolation:
@@ -113,14 +112,14 @@ qposir <- function(p, delta, d=1, Qtable=NULL) {
     }
     return(list(p1=p1,p2=p2,c1=c1,c2=c2))
   }
-  rowpos <- aux(p, alphagrid, "probability")
+  rowpos <- aux(alpha, alphagrid, "probability")
   colpos <- aux(delta, deltagrid, "delta")
   Q <- Qtable[rowpos$p1,colpos$p1]*rowpos$c1%*%t(colpos$c1) +
     Qtable[rowpos$p2,colpos$p1]*rowpos$c2%*%t(colpos$c1) +
     Qtable[rowpos$p1,colpos$p2]*rowpos$c1%*%t(colpos$c2) +
     Qtable[rowpos$p2,colpos$p2]*rowpos$c2%*%t(colpos$c2)
   colnames(Q) <- delta
-  rownames(Q) <- p
+  rownames(Q) <- alpha
   return(Q)
 }
 

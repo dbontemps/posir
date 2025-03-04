@@ -1,5 +1,6 @@
 # Package environment
-pkg.env <- new.env()
+pkg.env <- new.env(parent = emptyenv()) # pourquoi cet argument ? FIXME
+# Comment passser des éléments d'environnement aux futures dans la parallélisation ?
 
 ## logging
 pkg.env$cur.log.dir <- NULL
@@ -7,7 +8,7 @@ pkg.env$cur.log.file <- NULL
 pkg.env$cur.do.tee <- FALSE
 
 # POSIR processes quantiles tables
-pkg.qtables <- list(NULL,NULL)
+pkg.env$qtables <- list(NULL,NULL)
 
 ## Suite ne fonctionne pas FIXME
 # Pour le moment :

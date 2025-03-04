@@ -124,7 +124,7 @@ write_error_levels <- function(levs, NameF, Ndis, Ntraj, NameDis, d) {
 #' sim_dir <- local_init_testing(do_multi = TRUE,
 #'                               envir=sys.frame(sys.nframe()))
 #' mypathQ <- paste(find.package("posir"),
-#'   "/SavedOutputs/QTable_1040_10080.txt",
+#'   "/extdata/SavedOutputs/QTable_1040_10080.txt",
 #'   sep = ""
 #' )
 #' compute_error_levels(

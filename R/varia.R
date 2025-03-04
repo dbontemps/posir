@@ -30,15 +30,12 @@ get_inst_posir_path <- function() {
   return(find.package("posir"))
 }
 
-#' Find the path to a file in the SavedOutputs sub-directory
+#' Find the path to a file in the "extdata/SavedOutputs" directory
 #'
-#' In the [posir] tree, the SavedOutputs sub-directory is used for testing;
+#' In the [posir] tree, the SavedOutputs directory is used for testing;
 #' it contains mainly .RData files and some .txt ones,
 #' which each store the desired returns of some function,
 #' or a toy dataset to be passed as argument.
-#'
-#' When not installed, SavedOutputs is a subdirectory of "posir/inst/";
-#' when installed, SavedOutputs is a subdirectory of "posir/".
 #'
 #' find_Outputs_file() is a dev tool function,
 #' probably destined to later disappear or at least be rewritten.
@@ -56,7 +53,7 @@ get_inst_posir_path <- function() {
 #' }
 #' @keywords internal
 find_Outputs_file <- function(OutputFN, do_warn = TRUE) {
-  res <- paste(get_inst_posir_path(), "SavedOutputs", sep = "/")
+  res <- paste(get_inst_posir_path(), "extdata", "SavedOutputs", sep = "/")
   if (OutputFN == "" || substr(OutputFN, 1, 1) == "/") {
     res <- paste(res, OutputFN, sep = "")
   } else {
