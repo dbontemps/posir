@@ -4,14 +4,12 @@
 \alias{write_error_levels}
 \title{Export effective error levels tables to files}
 \usage{
-write_error_levels(levs, NameF, NameFQ, Ndis, Ntraj, NameDis, d)
+write_error_levels(levs, NameF, Ndis, Ntraj, NameDis, d)
 }
 \arguments{
 \item{levs}{table of effective error levels.}
 
 \item{NameF}{file name (to export to).}
-
-\item{NameFQ}{file name of the quantile table used in estimation.}
 
 \item{Ndis}{discretisation parameter of the POSIR process.}
 
@@ -23,6 +21,8 @@ of the distribution of the i.i.d. random variables
 that are summed in the POSIR process.}
 
 \item{d}{dimension parameter of the POSIR process (1 or 2).}
+
+\item{NameFQ}{file name of the quantile table used in estimation.}
 }
 \description{
 Export effective error levels tables to files

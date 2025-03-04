@@ -7,8 +7,14 @@
 #'
 #' @param NameF file name (to load from).
 #' @return A table of Quantile Estimations for a POSIR process.
+#' @export
 #'
-#' @keywords internal
+#' @examples
+#' mypathQ <- paste(find.package("posir"),
+#'   "/SavedOutputs/QTable_1040_10080.txt",
+#'   sep = ""
+#' )
+#' read_quantiles(mypathQ)
 read_quantiles <- function(NameF) {
   if (!file.exists(NameF)) {
     log_info(
@@ -64,10 +70,11 @@ load_quantiles <- function() {
 #' @export
 #'
 #' @examples
-#' qposir(NULL,.1)
-#' #Q=as.matrix(read.table("inst/Results/Table_quantiles_1D.txt"))
-#' #colnames(Q)=substring(colnames(Q),2)
-#' #qposir(NULL,.1,Qtable=Q)
+#' mypathQ <- paste(find.package("posir"),
+#'   "/SavedOutputs/QTable_1040_10080.txt",
+#'   sep = ""
+#' )
+#' qposir(NULL, .25, Qtable = read_quantiles(mypathQ))
 qposir <- function(p, delta, d=1, Qtable=NULL) {
   if(is.null(Qtable)) {
     if(d != 1 && d!=2) log_n_stop("Currently unsupported dimension")

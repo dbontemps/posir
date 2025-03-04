@@ -55,9 +55,9 @@ n_traj_simu(50, 100, seq(10, 1, -1) / 10, 10^6, rCenteredPareto, FALSE, 2)
 \code{\link[=run_simu]{run_simu()}}, \code{\link[=simulationDir]{simulationDir()}}, \code{\link[=check_grid]{check_grid()}}, \code{\link[=batch_filename]{batch_filename()}}
 
 Other POSIR process generators: 
-\code{\link{n_traj_simu_1D_C}()},
 \code{\link{n_traj_simu_1D}()},
-\code{\link{n_traj_simu_2D_C}()},
-\code{\link{n_traj_simu_2D}()}
+\code{\link{n_traj_simu_1D_C}()},
+\code{\link{n_traj_simu_2D}()},
+\code{\link{n_traj_simu_2D_C}()}
 }
 \concept{POSIR process generators}

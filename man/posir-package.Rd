@@ -20,14 +20,14 @@ for discretized, possibly non-Gaussian, POSIR processes.
 
 \section{Available (exported) functions}{
 \itemize{
-\item \link{compute_error_levels}
-\item \link{compute_quantiles}
-\item \link{extract_error_levels}
-\item \link{extract_quantiles}
-\item \link{n_traj_simu}, et ses versions \code{R}
-\link{n_traj_simu_1D_C} et \link{n_traj_simu_2D_C}
-\item \link{rCenteredPareto}
-\item \link{run_simu}
+\item \code{\link[=compute_error_levels]{compute_error_levels()}}
+\item \code{\link[=compute_quantiles]{compute_quantiles()}}
+\item \code{\link[=extract_error_levels]{extract_error_levels()}}
+\item \code{\link[=extract_quantiles]{extract_quantiles()}}
+\item \code{\link[=n_traj_simu]{n_traj_simu()}}, et ses versions \code{R}
+\code{\link[=n_traj_simu_1D_C]{n_traj_simu_1D_C()}} et \code{\link[=n_traj_simu_2D_C]{n_traj_simu_2D_C()}}
+\item \code{\link[=rCenteredPareto]{rCenteredPareto()}}
+\item \code{\link[=run_simu]{run_simu()}}
 }
 }
 

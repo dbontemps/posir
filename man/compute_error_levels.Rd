@@ -7,16 +7,13 @@
 compute_error_levels(
   Ntot,
   Batchsize,
-  NdisQ,
   Ndis,
   deltagrid,
   posdelta,
   gridname,
-  longdgrid_name,
   maxmatrixsize,
   sim_root_dir = "",
-  NameFQ = NULL,
-  filenamebasisQ = "Table_quantiles.txt",
+  Qtable = NULL,
   filenamebasis = "Table_niveaux_effectifs.txt",
   NameBaseBatch = "Batch",
   rdistrib = rCenteredPareto,
@@ -31,8 +28,6 @@ compute_error_levels(
 
 \item{Batchsize}{number of trajectories simulated in each batch.}
 
-\item{NdisQ}{discretisation parameter previously used in computing the quantiles.}
-
 \item{Ndis}{discretisation parameter of the POSIR process.}
 
 \item{deltagrid}{grid for \eqn{\delta} previously used in computing the quantiles.}
@@ -43,10 +38,13 @@ is used in \code{\link[=run_simu]{run_simu()}} to discretize the POSIR process t
 
 \item{gridname}{name of the sub-grid for \eqn{\delta},
 to be used in \code{\link[=simulationDir]{simulationDir()}}
-for the path definition of the error levels table.}
-
-\item{longdgrid_name}{name of the initial grid for \eqn{\delta},
-to be used in \code{\link[=simulationDir]{simulationDir()}} to retrieve the path of the quantile table.}
+for the path definition of the error levels table.
+#@param longdgrid_name name of the initial grid for \eqn{\delta},
+to be used in \code{\link[=simulationDir]{simulationDir()}} to retrieve the path of the quantile table.
+#@param NameFQ file name (with path) of the quantile table.
+#If NameFQ is NULL, the file name is computed anew using \code{\link[=simulationDir]{simulationDir()}}
+#from d, NdisQ, longdgrid_name, and filenamebasisQ.
+#@param filenamebasisQ file name for the quantile table (without the path).}
 
 \item{maxmatrixsize}{maximum number of i.i.d. random variables
 to be simultaneously simulated.}
@@ -54,11 +52,12 @@ to be simultaneously simulated.}
 \item{sim_root_dir}{root directory of the simulations. Both "" and "."
 stand for the current working directory.}
 
-\item{NameFQ}{file name (with path) of the quantile table.
-If NameFQ is NULL, the file name is computed anew using \code{\link[=simulationDir]{simulationDir()}}
-from d, NdisQ, longdgrid_name, and filenamebasisQ.}
-
-\item{filenamebasisQ}{file name for the quantile table (without the path).}
+\item{Qtable}{a table of (estimated) quantiles for a POSIR process;
+if NULL, then the pre-computed tables supplied with the package are used;
+otherwise, Qtable must be a matrix,
+whose colnames indicate a grid of delta values,
+whose rownames indicate a grid of probability values,
+and where both are sorted in decreasing order.}
 
 \item{filenamebasis}{file name for the error levels table (without the path).}
 
@@ -90,6 +89,9 @@ of the effective error levels of confidence intervals
 for a discretized, possibly non-Gaussian, 1D or 2D POSIR process,
 then save them in a file.
 }
+\details{
+#@param NdisQ discretisation parameter previously used in computing the quantiles.
+}
 \examples{
 logger::log_info("Running examples for compute_error_levels()",
                  namespace = "posir")
@@ -100,8 +102,11 @@ mypathQ <- paste(find.package("posir"),
   sep = ""
 )
 compute_error_levels(
-  1000, 50, 1040, 40, seq(7, 2, -1) / 8, 1:6, "de .875 à .25",
-  "6_div_8", 10^6, sim_dir, mypathQ
+  1000, 50, #1040,
+  40, seq(7, 2, -1) / 8, 1:6, "de .875 à .25",
+  #"6_div_8",
+  10^6, sim_dir, #mypathQ
+  Qtable = read_quantiles(mypathQ)
 )
 withr::deferred_run(envir=sys.frame(sys.nframe()))
 }

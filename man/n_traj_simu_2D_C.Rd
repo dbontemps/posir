@@ -35,10 +35,10 @@ and computes from it one trajectory of the associated 2D POSIR process.
 \code{\link[=run_simu]{run_simu()}}, \code{\link[=batch_filename]{batch_filename()}}
 
 Other POSIR process generators: 
-\code{\link{n_traj_simu_1D_C}()},
+\code{\link{n_traj_simu}()},
 \code{\link{n_traj_simu_1D}()},
-\code{\link{n_traj_simu_2D}()},
-\code{\link{n_traj_simu}()}
+\code{\link{n_traj_simu_1D_C}()},
+\code{\link{n_traj_simu_2D}()}
 }
 \concept{POSIR process generators}
 \keyword{internal}

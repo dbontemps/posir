@@ -39,11 +39,9 @@ myfun = function(n, positions, Nomgrilledeltafin,
     print("ERREUR : grille pour delta incorrecte")
     stop()
   }
-  compute_error_levels(Ntrajmin, Ntraj_batch, Ndiscretisation, n, grilledelta,
-                       positions, Nomgrilledeltafin, Nomgrilledeltainit,
-                       Taillemaxbatch, sim_path, NameFQ = NomfichierQuantiles,
-                       rdistrib = rdistrib, NameDis = NameDis,
-                       d=dimension)
+  compute_error_levels(Ntrajmin, Ntraj_batch, n, grilledelta, positions,
+                       Nomgrilledeltafin, Taillemaxbatch, sim_path,
+                       rdistrib = rdistrib, NameDis = NameDis, d=dimension)
 }
 
 # Exécutions

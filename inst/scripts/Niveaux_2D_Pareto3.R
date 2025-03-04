@@ -46,10 +46,9 @@ logger::log_threshold(logger::DEBUG, namespace = "posir")
 
 plan(multisession, workers = Ncores)
 for (n in c(50, 100, 200, 400)) {
-  compute_error_levels(Ntrajmin, Ntraj_batch, Ndiscretisation, n, grilledelta,
-                     positions, Nomgrilledeltafin, Nomgrilledeltainit,
-                     Taillemaxbatch, sim_path, NameFQ = NULL,
-                     rdistrib = rCenteredPareto, NameDis = "Pareto3",
-                     d=dimension)
+  compute_error_levels(Ntrajmin, Ntraj_batch, n, grilledelta, positions,
+                       Nomgrilledeltafin, Taillemaxbatch, sim_path,
+                       rdistrib = rCenteredPareto, NameDis = "Pareto3",
+                       d=dimension)
 }
 plan(sequential)

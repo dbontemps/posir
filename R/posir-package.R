@@ -22,14 +22,14 @@
 #'   for discretized, possibly non-Gaussian, POSIR processes.
 #'
 #' # Available (exported) functions
-#' * [compute_error_levels]
-#' * [compute_quantiles]
-#' * [extract_error_levels]
-#' * [extract_quantiles]
-#' * [n_traj_simu], et ses versions \code{R}
-#'   [n_traj_simu_1D_C] et [n_traj_simu_2D_C]
-#' * [rCenteredPareto]
-#' * [run_simu]
+#' * [compute_error_levels()]
+#' * [compute_quantiles()]
+#' * [extract_error_levels()]
+#' * [extract_quantiles()]
+#' * [n_traj_simu()], et ses versions \code{R}
+#'   [n_traj_simu_1D_C()] et [n_traj_simu_2D_C()]
+#' * [rCenteredPareto()]
+#' * [run_simu()]
 #'
 #' # POSIR processes
 #' ## Definition
