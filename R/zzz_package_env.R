@@ -8,7 +8,6 @@ pkg.env$cur.do.tee <- FALSE
 
 # POSIR processes quantiles tables
 pkg.qtables <- list(NULL,NULL)
-load_quantiles()
 
 ## Suite ne fonctionne pas FIXME
 # Pour le moment :

@@ -17,7 +17,7 @@
 #' read_quantiles(mypathQ)
 read_quantiles <- function(NameF) {
   if (!file.exists(NameF)) {
-    log_info(
+    log_warn(
       paste("Not found quantile table", NameF,
       "in read_quantiles().")
     )
@@ -46,8 +46,10 @@ load_quantiles <- function() {
   base_path <- paste(get_inst_posir_path(),
                      "/Results/Table_quantiles_", sep="")
   for(i in 1:2) {
+    if(is.null(pkg.qtables[[i]])) log_warn("***")
     pkg.qtables[[i]] <- read_quantiles(paste(
       base_path, toString(i), "D.txt", sep=""))
+    if(is.null(pkg.qtables[[i]])) log_n_stop("...")
   }
 }
 
@@ -78,6 +80,8 @@ load_quantiles <- function() {
 qposir <- function(p, delta, d=1, Qtable=NULL) {
   if(is.null(Qtable)) {
     if(d != 1 && d!=2) log_n_stop("Currently unsupported dimension")
+    if(is.null(pkg.qtables[[d]])) load_quantiles()
+    if(is.null(pkg.qtables[[d]])) log_n_stop("???")
     Qtable <- pkg.qtables[[d]]
     if(is.null(Qtable))
       log_n_stop("The pre-compiled quantiles table could not be loaded")
