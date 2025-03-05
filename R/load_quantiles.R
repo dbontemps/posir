@@ -63,7 +63,10 @@ load_quantiles <- function() {
 #' @param alpha vector of queue probabilities;
 #' usually a vector p of probabilities is used in such function,
 #' but due to legacy code, here alpha == 1 - p.
-#' @param delta vector of delta parameters.
+#' @param delta vector of delta parameters;
+#' when d==1, the delta parameters have to be in the interval \[0.005, 1\];
+#' with d==2, the delta parameters have to be in the interval \[0.01, 1\];
+#' in both cases, the estimated quantiles for delta very small are to be taken with caution.
 #' @param d dimension: currently 1 and 2 are supported.
 #' @param Qtable a table of (estimated) quantiles for a POSIR process;
 #' if NULL, then the pre-computed tables supplied with the package are used;

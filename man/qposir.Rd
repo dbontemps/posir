@@ -9,7 +9,10 @@ qposir(p, delta, d = 1)
 \arguments{
 \item{p}{vector of probabilities.}
 
-\item{delta}{vector of delta parameters.}
+\item{delta}{vector of delta parameters;
+when d==1, the delta parameters have to be in the interval [0.005, 1];
+with d==2, the delta parameters have to be in the interval [0.01, 1];
+in both cases, the estimated quantiles for delta very small are to be taken with caution.}
 
 \item{d}{dimension: currently 1 and 2 are supported.}
 }
