@@ -13,14 +13,19 @@ read_quantiles(NameF)
 A table of Quantile Estimations for a POSIR process.
 }
 \description{
-Both the delta parameter (columns) and the probaility parameter (rows)
-have to be sorted in decreasing order,
+The columns correspond to the delta parameter of the POSIR process.
+Due to legacy code, the row correspond to a queue probability parameter
+(alpha = 1-p). Both have to be sorted in decreasing order,
 if not the function log a warning and returns NULL.
 }
 \examples{
+\dontrun{
 mypathQ <- paste(find.package("posir"),
   "/extdata/SavedOutputs/QTable_1040_10080.txt",
   sep = ""
 )
 read_quantiles(mypathQ)
 }
+
+}
+\keyword{internal}

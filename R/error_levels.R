@@ -109,7 +109,7 @@ write_error_levels <- function(levs, NameF, Ndis, Ntraj, NameDis, d) {
 #' @inheritParams check_grid
 #' @inheritParams batch_filename
 #' @inheritParams extract_error_levels
-#' @inheritParams qposir
+#' @inheritParams posir_quantiles
 #' @seealso [run_simu()], [extract_error_levels()], [write_error_levels()], [compute_quantiles()]
 #'
 #' @return A table of (simultaneous) effective error levels,
@@ -127,13 +127,11 @@ write_error_levels <- function(levs, NameF, Ndis, Ntraj, NameDis, d) {
 #'   "/extdata/SavedOutputs/QTable_1040_10080.txt",
 #'   sep = ""
 #' )
+#' Qtable = as.matrix(read.table(mypathQ))
+#' colnames(Qtable) = substring(colnames(Qtable),2)
 #' compute_error_levels(
-#'   1000, 50, #1040,
-#'   40, seq(7, 2, -1) / 8, 1:6, "de .875 à .25",
-#'   #"6_div_8",
-#'   10^6, sim_dir, #mypathQ
-#'   Qtable = read_quantiles(mypathQ)
-#' )
+#'   1000, 50, 40, seq(7, 2, -1) / 8, 1:6, "de .875 à .25",
+#'   10^6, sim_dir, Qtable)
 #' withr::deferred_run(envir=sys.frame(sys.nframe()))
 compute_error_levels <- function(Ntot, Batchsize,  Ndis, deltagrid, posdelta,
                                  gridname, maxmatrixsize,
@@ -145,7 +143,7 @@ compute_error_levels <- function(Ntot, Batchsize,  Ndis, deltagrid, posdelta,
                                  precN = floor(log10(Ntot)/2)+2,
                                  d = 1, ErLev = .001) {
   local_log_init(sim_root_dir)
-  if(is.null(Qtable)) Qtable <- qposir(NULL, deltagrid, d)
+  if(is.null(Qtable)) Qtable <- posir_quantiles(NULL, deltagrid, d)
   NameF <- paste(simulationDir(sim_root_dir, Ndis, gridname, NameDis, d),
     filenamebasis,
     sep = "/"

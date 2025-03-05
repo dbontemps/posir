@@ -101,13 +101,11 @@ mypathQ <- paste(find.package("posir"),
   "/extdata/SavedOutputs/QTable_1040_10080.txt",
   sep = ""
 )
+Qtable = as.matrix(read.table(mypathQ))
+colnames(Qtable) = substring(colnames(Qtable),2)
 compute_error_levels(
-  1000, 50, #1040,
-  40, seq(7, 2, -1) / 8, 1:6, "de .875 à .25",
-  #"6_div_8",
-  10^6, sim_dir, #mypathQ
-  Qtable = read_quantiles(mypathQ)
-)
+  1000, 50, 40, seq(7, 2, -1) / 8, 1:6, "de .875 à .25",
+  10^6, sim_dir, Qtable)
 withr::deferred_run(envir=sys.frame(sys.nframe()))
 }
 \seealso{

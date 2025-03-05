@@ -1,20 +1,24 @@
 
 #' Load the quantiles table of a POSIR process from a file
 #'
-#' Both the delta parameter (columns) and the probaility parameter (rows)
-#' have to be sorted in decreasing order,
+#' The columns correspond to the delta parameter of the POSIR process.
+#' Due to legacy code, the row correspond to a queue probability parameter
+#' (alpha = 1-p). Both have to be sorted in decreasing order,
 #' if not the function log a warning and returns NULL.
 #'
 #' @param NameF file name (to load from).
 #' @return A table of Quantile Estimations for a POSIR process.
-#' @export
 #'
 #' @examples
+#' \dontrun{
 #' mypathQ <- paste(find.package("posir"),
 #'   "/extdata/SavedOutputs/QTable_1040_10080.txt",
 #'   sep = ""
 #' )
 #' read_quantiles(mypathQ)
+#' }
+#'
+#' @keywords internal
 read_quantiles <- function(NameF) {
   if (!file.exists(NameF)) {
     log_warn(
@@ -58,7 +62,7 @@ load_quantiles <- function() {
 #'
 #' @param alpha vector of queue probabilities;
 #' usually a vector p of probabilities is used in such function,
-#' but due to legacy code, here alpha == 1 - p. # FIXME
+#' but due to legacy code, here alpha == 1 - p.
 #' @param delta vector of delta parameters.
 #' @param d dimension: currently 1 and 2 are supported.
 #' @param Qtable a table of (estimated) quantiles for a POSIR process;
@@ -69,15 +73,18 @@ load_quantiles <- function() {
 #' and where both are sorted in decreasing order.
 #'
 #' @returns A table of quantiles.
-#' @export
 #'
 #' @examples
+#' \dontrun{
 #' mypathQ <- paste(find.package("posir"),
 #'   "/extdata/SavedOutputs/QTable_1040_10080.txt",
 #'   sep = ""
 #' )
-#' qposir(NULL, .25, Qtable = read_quantiles(mypathQ))
-qposir <- function(alpha, delta, d=1, Qtable=NULL) {
+#' posir_quantiles(NULL, .25, Qtable = read_quantiles(mypathQ))
+#' }
+#'
+#' @keywords internal
+posir_quantiles <- function(alpha, delta, d=1, Qtable=NULL) {
   if(is.null(Qtable)) {
     if(d != 1 && d!=2) log_n_stop("Currently unsupported dimension")
     if(is.null(pkg.env$qtables[[d]])) load_quantiles()
@@ -102,7 +109,7 @@ qposir <- function(alpha, delta, d=1, Qtable=NULL) {
       p1[i] <- sum(grid>=x[i])
       p2[i] <- l+1-sum(grid<=x[i])
       if(p1[i]==0 || p2[i]>l)
-        log_n_stop(paste("Out of range", gridname, "parameter in qposir()."))
+        log_n_stop(paste("Out of range", gridname, "parameter in posir_quantiles()."))
       if(p2[i]!=p1[i]) {
         v1 <- grid[p1[i]]
         v2 <- grid[p2[i]]
@@ -122,6 +129,20 @@ qposir <- function(alpha, delta, d=1, Qtable=NULL) {
   rownames(Q) <- alpha
   return(Q)
 }
+
+#' Quantile distribution of POSIR processes
+#'
+#' Extrapolates a quantile from the pre-computed estimated POSIR quantiles.
+#'
+#' @param p vector of probabilities.
+#' @inheritParams posir_quantiles
+#'
+#' @returns A table of quantiles.
+#' @export
+#'
+#' @examples
+#' qposir(c(0.9,0.95,0.99), .25)
+qposir <- function(p, delta, d=1) { posir_quantiles(1-p, delta, d) }
 
 
 

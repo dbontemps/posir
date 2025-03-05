@@ -4,34 +4,21 @@
 \alias{qposir}
 \title{Quantile distribution of POSIR processes}
 \usage{
-qposir(alpha, delta, d = 1, Qtable = NULL)
+qposir(p, delta, d = 1)
 }
 \arguments{
-\item{alpha}{vector of queue probabilities;
-usually a vector p of probabilities is used in such function,
-but due to legacy code, here alpha == 1 - p. # FIXME}
+\item{p}{vector of probabilities.}
 
 \item{delta}{vector of delta parameters.}
 
 \item{d}{dimension: currently 1 and 2 are supported.}
-
-\item{Qtable}{a table of (estimated) quantiles for a POSIR process;
-if NULL, then the pre-computed tables supplied with the package are used;
-otherwise, Qtable must be a matrix,
-whose colnames indicate a grid of delta values,
-whose rownames indicate a grid of probability values,
-and where both are sorted in decreasing order.}
 }
 \value{
 A table of quantiles.
 }
 \description{
-Extrapolates a quantile from a previous table of (estimated) quantiles.
+Extrapolates a quantile from the pre-computed estimated POSIR quantiles.
 }
 \examples{
-mypathQ <- paste(find.package("posir"),
-  "/extdata/SavedOutputs/QTable_1040_10080.txt",
-  sep = ""
-)
-qposir(NULL, .25, Qtable = read_quantiles(mypathQ))
+qposir(c(0.9,0.95,0.99), .25)
 }
