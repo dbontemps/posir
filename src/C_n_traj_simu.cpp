@@ -1,7 +1,7 @@
 #include "C_n_traj_simu.h"
 
 // [[Rcpp::depends(RcppArmadillo)]]
-// [[Rcpp::plugins("cpp11")]]
+/* // [[Rcpp::plugins("cpp11")]] */
 
 /**
  * C++ doc is in .h files.
