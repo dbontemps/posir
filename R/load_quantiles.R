@@ -147,24 +147,4 @@ posir_quantiles <- function(alpha, delta, d=1, Qtable=NULL) {
 #' qposir(c(0.9,0.95,0.99), .25)
 qposir <- function(p, delta, d=1) { posir_quantiles(1-p, delta, d) }
 
-#' Title
-#'
-#' @param x a vector of observations to which a segmentation is applied.
-#' @param bkp a vector of bkp positions (the last row index before a breakpoint)
-#' which must be given in increasing order.
-#' @param delta a lower bound on the relative length of the regions,
-#' under which the confidence intervals are not given. Currently in dimension 1,
-#' delta has to be in the interval \[0.005, 1\].
-#' @param alpha the simultaneous error level for the confidence intervals.
-#'
-#' @returns simultaneous confidence intervals for the mean value of data x
-#' in each region delimited by bkp. The intervals are given as a list: #FIXME
-#'
-#' @export
-#'
-#' @examples
-confidence_intervals_1D <- function(x, bkp, delta, alpha) {
-  l=length(x)
-
-}
 
