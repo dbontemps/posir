@@ -145,6 +145,10 @@ posir_quantiles <- function(alpha, delta, d=1, Qtable=NULL) {
 #'
 #' @examples
 #' qposir(c(0.9,0.95,0.99), .25)
-qposir <- function(p, delta, d=1) { posir_quantiles(1-p, delta, d) }
+qposir <- function(p, delta, d=1) {
+  res = posir_quantiles(1-p, delta, d)
+  if(nrow(res)==1 || ncol(res)==1) res=as.vector(res)
+  return(res)
+}
 
 
