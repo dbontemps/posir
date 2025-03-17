@@ -6,7 +6,7 @@
 for a segmentation applied to a numeric vector
 using 1D POSIR method.}
 \usage{
-confidence_intervals_1D(x, breakpoints, delta, alpha)
+confidence_intervals_1D(x, breakpoints, delta, alpha, homoscedatic = TRUE)
 }
 \arguments{
 \item{x}{a vector of observations to which a segmentation is applied.}
@@ -20,6 +20,10 @@ under which the confidence intervals are not given. Currently in dimension 1,
 delta has to be in the interval [0.005, 1].}
 
 \item{alpha}{the simultaneous error level for the confidence intervals.}
+
+\item{homoscedatic}{a boolean which indicates whether
+the estimation of the standard deviation is common across the segments
+(when true), or is done separately in each segment (when false).}
 }
 \value{
 an object of class posir1DCI, which contains

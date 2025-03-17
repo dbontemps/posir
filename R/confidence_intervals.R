@@ -155,6 +155,9 @@ plot.posir1DCI <- function(x,...) {
 #'
 #' @inheritParams CI1Ddatavalidation
 #' @inheritParams CI1Dparamvalidation
+#' @param homoscedatic a boolean which indicates whether
+#' the estimation of the standard deviation is common across the segments
+#' (when true), or is done separately in each segment (when false).
 #'
 #' @returns an object of class posir1DCI, which contains
 #' simultaneous confidence intervals for the mean value of data x
@@ -166,24 +169,34 @@ plot.posir1DCI <- function(x,...) {
 #' x=rnorm(50)+c(rep(1,15), rep(2,35))
 #' bkp=c(10,20)
 #' confidence_intervals_1D(x,bkp,.1,.005)
-confidence_intervals_1D <- function(x, breakpoints, delta, alpha) {
+confidence_intervals_1D <- function(x, breakpoints, delta, alpha,
+                                    homoscedatic = TRUE) {
   if(!CI1Ddatavalidation(x, breakpoints) ||
      !CI1Dparamvalidation(delta, alpha))
     log_n_stop("invalid argument in confidence_intervals_1D().")
   n=length(x)
   l=length(breakpoints)+1
+  if(l>=n) log_n_stop("too many breakpoints in confidence_intervals_1D().")
   aux_bkp=c(0, breakpoints, n)
   someNA=FALSE
-  lmin=max(5,ceiling(n*delta))
+  lmin=max(2,ceiling(n*delta)) #
   q=posir_quantiles(alpha, delta, d=1)
   lbs=ubs=rep(NA,l)
-  moy=rep(0,l)
+  moy=lens=s=rep(0,l)
   for(i in 1:l) {
     cur = x[(aux_bkp[i]+1):aux_bkp[i+1]]
+    lens[i]=length(cur)
     moy[i] = mean(cur)
-    lcur=length(cur)
-    if(lcur>=lmin) {
-      r=q*sd(cur)/sqrt(lcur)
+    s[i] = sd(cur)
+  }
+  if(homoscedatic) {
+    aux=c()
+    for(i in 1:l) aux=c(aux,rep(moy[i],lens[i]))
+    s=rep(sqrt(sum((x-aux)^2)/(n-l)),l)
+  }
+  for(i in 1:l) {
+    if(lens[i]>=lmin) {
+      r=q*s[i]/sqrt(lens[i])
       lbs[i]=moy[i]-r
       ubs[i]=moy[i]+r
     }
