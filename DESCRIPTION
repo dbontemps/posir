@@ -2,7 +2,7 @@ Package: posir
 Type: Package
 Title: Simulations of 1D and 2D POSIR processes, quantiles, and CI
     effective error levels
-Version: 0.1.1.9021
+Version: 0.1.1.9022
 Author: Dominique Bontemps <dominique.bontemps@math.univ-toulouse.fr>
 Maintainer: Dominique Bontemps <dominique.bontemps@math.univ-toulouse.fr>
 Description: Simulation of trajectories of 1D or 2D POSIR processes,
