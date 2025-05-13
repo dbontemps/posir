@@ -17,10 +17,11 @@ in both cases, the estimated quantiles for delta very small are to be taken with
 \item{d}{dimension: currently 1 and 2 are supported.}
 }
 \value{
-A table of quantiles.
+A table of quantiles if both p and delta have several values,
+else qposir() returns a vector of quantiles.
 }
 \description{
-Extrapolates a quantile from the pre-computed estimated POSIR quantiles.
+Estimates a quantile from the pre-computed estimated POSIR quantiles.
 }
 \examples{
 qposir(c(0.9,0.95,0.99), .25)

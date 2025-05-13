@@ -1,0 +1,112 @@
+---
+title: "Simulating DNA copy number signals"
+author: "P. Neuvial and D. Bontemps"
+format:
+  html:
+    embed-resources: true
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup}
+library("jointseg")
+```
+
+Generate data with known truth:
+
+> for simplicity, only have two types of regions: one is centered around 0 and corresponds to 2 DNA copies (normal region), the other one corresponds to 3 DNA copies (region with a copy number alteration, CNA). The latter is not centered around 1 for biological/experimental reasons.
+
+```{r signal}
+## load known real copy number regions
+affyDat <- acnr::loadCnRegionData(dataSet="GSE29172", tumorFraction=1)
+dat <- subset(affyDat, region %in% c("(1,1)", "(1,2)"))
+baseline <- mean(subset(dat, region == "(1,1)")$c) # mean of normal region
+
+## generate a synthetic CN profile
+K <- 10
+n <- 1e4
+sim <- getCopyNumberDataByResampling(n, K, regData=dat)
+true_bkp <- sim$bkp # "bkp positions (the last row index before a breakpoint)"
+
+
+Y <- sim$profile$c - baseline
+plot(Y)
+```
+
+Segment (asking for twice as many segments as the true value)
+
+```{r segmentation}
+seg <- doDynamicProgramming(Y, K = 2*K)
+seg$bkp
+plotSeg(Y, breakpoints = seg$bkp)
+```
+
+
+Now we can build simultaneous confidence intervals for the mean of each segment, at a confidence level of .95
+
+```{r conf-int}
+library(posir)
+delta <- max(10/n,0.005) # internal limitation of posir
+posirCI <- posir::confidence_intervals_1D(Y,seg$bkp,delta,.05)
+plot(posirCI)
+```
+
+Compute the empirical mean for each segment in the true segmentation, and add it to the previous plot
+
+```{r segment-mean}
+bx <- c(0, true_bkp, n) + 0.5
+seg_means <- matrixStats::binMeans(Y, x = seq(along = Y), bx = bx)
+plot(posirCI)
+for(i in 1:K) abline(v=true_bkp[i]+0.5, col="blue")
+for(i in 1:(K+1)) lines(c(bx[i],bx[i+1]), rep(seg_means[i],2), col="blue")
+```
+
+Comparaison avec une technique basique de découpage des données en 2 datasets : les observations en position paire servent à sélectionner la segmentation, ceux en position impaire à calculer les intervalles de confiance. Si $k$ est le nombre (potentiellement aléatoire) de régions dans la segmentation finale, l'intervalle de confiance pour la valeur moyenne de $\mu$ dans la région $I$ aura pour rayon $q \hat{\sigma}/\sqrt{\ell(I)/2}$, où $\ell(I)$ est la longueur de $I$, le "/2" vient du fait que l'on n'utilise que la moitié des observations, et le $q$ est le quantile gaussien de niveau $1-\alpha/(2k)$ (règle de Bonferroni). Comparons avec le rayon POSIR $K_{\alpha,\delta} \hat{\sigma}/\sqrt{\ell(I)}$ :
+
+```{r comparaison avec Bonferroni}
+aux = function(k,p=0.95,delta=0.1) {
+  return(sqrt(2)*qnorm(1-(1-p)/(2*k))/qposir(p,delta))
+}
+aux(1:10)
+```
+
+On voit que pour $\delta=0.1$ et un taux de confiance de $95\%$, la méthode POSIR commence à être meilleure dès que la segmentation inclut 7 coupures.
+
+Cependant, en utilisant l'indépendance des observations, les différents IC sont indépendants conditionnellement à la segmentation, et on peut plutôt prendre le quantile d'ordre $(1+\sqrt[k]{p})/2$ :
+
+```{r comparaison avec indépendance conditionnelle des IC}
+aux = function(k,p=0.95,delta=0.1) {
+  return(sqrt(2)*qnorm((1+p^(1/k))/2)/qposir(p,delta))
+}
+aux(1:10)
+```
+
+Ça ne fait pas vraiment de différence.
+
+Que se passe-t-il si $\delta$ est choisi en fonction du $K$ maximal, par exemple $\delta=\frac{1}{2 K}$ ?
+
+```{r lien entre K et delta}
+aux = function(k,p=0.95) {
+  return(sqrt(2)*qnorm(1-(1-p)/(2*k))/qposir(p,1/(2*k)))
+}
+plot(1:100,aux(1:100),type="l")
+```
+
+```{r comparaisons de quantiles pour K fixe}
+aux = function(c,k,p=0.95) {
+  return(sqrt(2)*qnorm(1-(1-p)/(2*k))/qposir(p,c/k))
+}
+par(mfrow=c(2,2))
+for(k in c(5,10,20,50)) {
+  c=seq(from=k*.005, to=1, length.out=101)
+  plot(c,aux(c,k),type="l", main=paste("Quantiles ratio for delta=c/K, with K =",toString(k)), 
+       xlab = "c", ylab = "ratio")
+}
+```
+
+## References
+
+Pierre-Jean, M., Rigaill, G., & Neuvial, P. (2015). Performance evaluation of DNA copy number segmentation methods. Briefings in bioinformatics, 16(4), 600-615.
+https://pubmed.ncbi.nlm.nih.gov/25202135/
+
+(Ajouter papier BaBoNe)

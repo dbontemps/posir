@@ -29,7 +29,7 @@ and where both are sorted in decreasing order.}
 A table of quantiles.
 }
 \description{
-Extrapolates a quantile from a previous table of (estimated) quantiles.
+Obtains by interpolation a quantile from a previous table of (estimated) quantiles.
 }
 \examples{
 \dontrun{

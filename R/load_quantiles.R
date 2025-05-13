@@ -58,7 +58,7 @@ load_quantiles <- function() {
 
 #' Quantile distribution of POSIR processes
 #'
-#' Extrapolates a quantile from a previous table of (estimated) quantiles.
+#' Obtains by interpolation a quantile from a previous table of (estimated) quantiles.
 #'
 #' @param alpha vector of queue probabilities;
 #' usually a vector p of probabilities is used in such function,
@@ -135,12 +135,13 @@ posir_quantiles <- function(alpha, delta, d=1, Qtable=NULL) {
 
 #' Quantile distribution of POSIR processes
 #'
-#' Extrapolates a quantile from the pre-computed estimated POSIR quantiles.
+#' Estimates a quantile from the pre-computed estimated POSIR quantiles.
 #'
 #' @param p vector of probabilities.
 #' @inheritParams posir_quantiles
 #'
-#' @returns A table of quantiles.
+#' @returns A table of quantiles if both p and delta have several values,
+#' else qposir() returns a vector of quantiles.
 #' @export
 #'
 #' @examples
@@ -151,4 +152,43 @@ qposir <- function(p, delta, d=1) {
   return(res)
 }
 
-
+#' Distribution function of POSIR processes
+#'
+#' Estimates a probability from the pre-computed estimated POSIR quantiles.
+#'
+#' @param q vector of quantiles.
+#' @inheritParams posir_quantiles
+#'
+#' @returns A table of probabilities if both q and delta have several values,
+#' else pposir() returns a vector of probabilities;
+#' currently returns NA in two cases: if the estimated probability
+#' is smaller than 0.5 or if is larger than 0.999.
+#' @export
+#'
+#' @examples
+#' pposir(c(2.6455,4,5), c(.25,0.01))
+#' pposir(2.6455, .25)
+pposir <- function(q, delta, d=1) {
+  Qtable <- posir_quantiles(NULL, delta, d)
+  alphagrid <- as.numeric(rownames(Qtable))
+  l <- nrow(Qtable)
+  n <- length(q)
+  m <- length(delta)
+  res <- matrix(NA,n, m)
+  for(k in 1:m) {
+    qgrid=as.vector(Qtable[,k])
+    for(i in 1:n) {
+      pos = sum(qgrid<=q[i])
+      if(pos==l && q[i]==qgrid[l]) res[i,k] <- alphagrid[l]
+      if(pos>0 && pos<l) {
+        if(qgrid[pos+1]==qgrid[pos])
+          res[i,k] <- (alphagrid[pos]+alphagrid[pos+1])/2
+        else res[i,k] <- (alphagrid[pos]*(qgrid[pos+1]-q[i])+
+                            alphagrid[pos+1]*(q[i]-qgrid[pos])
+                          )/(qgrid[pos+1]-qgrid[pos])
+      }
+    }
+  }
+  if(nrow(res)==1 || ncol(res)==1) res=as.vector(res)
+  return(1-res)
+}
