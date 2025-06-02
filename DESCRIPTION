@@ -6,8 +6,7 @@ Version: 0.1.1.9022
 Author: Dominique Bontemps <dominique.bontemps@math.univ-toulouse.fr>
 Maintainer: Dominique Bontemps <dominique.bontemps@math.univ-toulouse.fr>
 Description: Simulation of trajectories of 1D or 2D POSIR processes,
-    estimation of quantiles as well as effective error levels of
-    confidence intervals.
+    estimation of quantiles and effective error levels of confidence intervals.
 License: MIT + file LICENSE
 Depends:
     R (>= 3.5.0)
