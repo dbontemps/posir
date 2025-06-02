@@ -1,8 +1,8 @@
 
-library(rlist)
+library("rlist")
 library("ggplot2")
 ggplot2::theme_set(theme_minimal())
-library(xtable)
+library("xtable")
 
 print_quantiles = function(filename) {
   alphagrid <- c(0.5, 0.2, 0.1, 0.05, 0.01, 0.005, 0.001)
@@ -15,8 +15,9 @@ print_quantiles = function(filename) {
   print(xtable(X,digits=3))
 }
 
-print_quantiles("Table_quantiles_1D.txt")
-print_quantiles("Table_quantiles_2D.txt")
+path <- system.file("extdata", package = "posir")
+print_quantiles(file.path(path, "Table_quantiles_1D.txt"))
+print_quantiles(file.path(path, "Table_quantiles_2D.txt"))
 
 read_levels = function(prename, sufname, criterion, alphagrid, deltagrid) {
   myY = list()
@@ -53,54 +54,57 @@ plot_levels = function(Y, alphagrid, critname, title, filename) {
          y = "Effective error level",
          color = critname)
   p
-  ggsave(p, filename = filename, height = 4, width = 6) #, height = 4, width = 6
 }
 
 alphagrid <- c(0.5, 0.1, 0.05, 0.01, 0.001)
 deltagrid <- (1:10)/10
-prename = "1D_Discretization_"
+prename = "Simulations/1D_Discretization_"
 sufname = "_Laplace_grid_1to.1by.1/Table_niveaux_effectifs.txt"
 preIname = "effective-confidence-level_"
 ExtI = ".png"
 
 filename = paste(preIname, "Laplace", ExtI, sep="")
 Y = read_levels(prename, sufname, c(30, 50, 100, 400), alphagrid, deltagrid)
-plot_levels(Y, alphagrid, "n",
+p <- plot_levels(Y, alphagrid, "n",
             "Laplace for various n",
             filename)
+ggsave(p, filename = filename, height = 4, width = 6) #, height = 4, width = 6
 
 sufname = "_Pareto2.1_grid_1to.1by.1/Table_niveaux_effectifs.txt"
 filename = paste(preIname, "centered-Pareto_2.1", ExtI, sep="")
 Y = read_levels(prename, sufname,
                 c(30, 50, 100, 400, 1000, 5000, 10000, 20000, 50000),
                 alphagrid, deltagrid)
-plot_levels(Y, alphagrid, "n",
+p <- plot_levels(Y, alphagrid, "n",
             "Centered Pareto of shape 2.1 for various n",
             filename)
+ggsave(p, filename = filename, height = 4, width = 6) #, height = 4, width = 6
 
 sufname = "_Pareto3_grid_1to.1by.1/Table_niveaux_effectifs.txt"
 filename = paste(preIname, "centered-Pareto_3", ExtI, sep="")
 Y = read_levels(prename, sufname, c(30, 50, 100, 400, 1000, 5000),
                 alphagrid, deltagrid)
-plot_levels(Y, alphagrid, "n",
+p <- plot_levels(Y, alphagrid, "n",
             "Centered Pareto of shape 3 for various n",
             filename)
+ggsave(p, filename = filename, height = 4, width = 6) #, height = 4, width = 6
 
 prename = "1D_Discretization_100_Pareto"
 sufname = "_grid_1to.1by.1/Table_niveaux_effectifs.txt"
 filename = paste(preIname, "n100_centered-Paretos", ExtI, sep="")
 Y = read_levels(prename, sufname, c(2.1, 2.4, 3, 4, 10),
                 alphagrid, deltagrid)
-plot_levels(Y, alphagrid, "Pareto shape",
+p <- plot_levels(Y, alphagrid, "Pareto shape",
             "Centered Pareto with n = 100 for various shapes",
             filename)
+ggsave(p, filename = filename, height = 4, width = 6) #, height = 4, width = 6
 
 prename = "2D_Discretization_"
 sufname = "_Pareto3_grid_1to.1by.1/Table_niveaux_effectifs.txt"
 filename = "2D_effective-confidence-level_centered-Pareto_3.png"
 Y = read_levels(prename, sufname, c(50, 100, 200, 400),
                 alphagrid, deltagrid)
-plot_levels(Y, alphagrid, "n",
+p <- plot_levels(Y, alphagrid, "n",
             "2D centered Pareto of shape 3 for various n",
             filename)
-
+ggsave(p, filename = filename, height = 4, width = 6) #, height = 4, width = 6
