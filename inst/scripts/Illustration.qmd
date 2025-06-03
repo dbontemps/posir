@@ -10,6 +10,7 @@ editor_options:
 
 ```{r setup}
 library("jointseg")
+library("posir")
 ```
 
 Generate data with known truth:
@@ -19,37 +20,73 @@ Generate data with known truth:
 ```{r signal}
 ## load known real copy number regions
 affyDat <- acnr::loadCnRegionData(dataSet="GSE29172", tumorFraction=1)
-dat <- subset(affyDat, region %in% c("(1,1)", "(1,2)"))
-baseline <- mean(subset(dat, region == "(1,1)")$c) # mean of normal region
+# population means
+mu_l <- mean(subset(affyDat, region == "(0,1)")$c) # mean of region with 1 copies (loss)
+mu_0 <- mean(subset(affyDat, region == "(1,1)")$c) # mean of region with 2 copies (normal)
+mu_g <- mean(subset(affyDat, region == "(1,2)")$c) # mean of region with 3 copies (gain)
+dat <- subset(affyDat, region %in% c("(0,1)", "(1,1)", "(1,2)"))
 
 ## generate a synthetic CN profile
 K <- 10
 n <- 1e4
-sim <- getCopyNumberDataByResampling(n, K, regData=dat)
+set.seed(20250603)
+sim <- getCopyNumberDataByResampling(n, K, regData=dat, minLength = 200)
 true_bkp <- sim$bkp # "bkp positions (the last row index before a breakpoint)"
 
 
-Y <- sim$profile$c - baseline
-plot(Y)
+Y <- sim$profile$c
 ```
 
-Segment (asking for twice as many segments as the true value)
+Data without annotation
+```{r}
+ylims <- rbind(0.5, 3)
+plotSeg(Y, ylims = ylims)
+```
+
+Data with true breakpoints and corresponding empirical segment means
+```{r}
+plotSeg(Y, breakpoints = true_bkp, ylims = ylims)
+```
+
+Adding the population means
+```{r}
+plotSeg(Y, breakpoints = true_bkp, ylims = ylims)
+abline(h = c(mu_0, mu_l, mu_g), col = "darkgray", lty = "dashed")
+```
+
+Now we can build simultaneous confidence intervals for the mean of each segment, at a confidence level of .95 (at this stage the true breakpoint positions are used!)
+
+```{r conf-int-true-bkp}
+delta <- max(10/n, 0.005) # internal limitation of posir
+posirCI <- posir::confidence_intervals_1D(Y, true_bkp, delta, 0.05)
+plot(posirCI, box = TRUE, ylim = ylims, 
+     xlab = "Chromosomal position", ylab = "DNA copy number")
+abline(h = c(mu_0, mu_l, mu_g), col = "darkgray", lty = "dashed")
+```
+
+
+Segment (asking for twice the true number of breakpoints)
 
 ```{r segmentation}
-seg <- doDynamicProgramming(Y, K = 2*K)
+seg <- doDynamicProgramming(Y, K = 20)
 seg$bkp
-plotSeg(Y, breakpoints = seg$bkp)
+plotSeg(Y, breakpoints = list(seg$bkp, true_bkp), ylims = ylims)
+abline(h = c(mu_0, mu_l, mu_g), col = "darkgray", lty = "dashed")
 ```
 
 
 Now we can build simultaneous confidence intervals for the mean of each segment, at a confidence level of .95
 
-```{r conf-int}
-library(posir)
-delta <- max(10/n,0.005) # internal limitation of posir
-posirCI <- posir::confidence_intervals_1D(Y,seg$bkp,delta,.05)
-plot(posirCI)
+```{r conf-int-seg}
+delta <- max(10/n, 0.005) # internal limitation of posir
+posirCI <- posir::confidence_intervals_1D(Y, seg$bkp, delta, 0.05)
+plot(posirCI, box = TRUE, ylim = ylims, 
+     xlab = "Chromosomal position", ylab = "DNA copy number")
+abline(h = c(mu_0, mu_l, mu_g), col = "darkgray", lty = "dashed")
 ```
+
+Note that by construction, the confidence intervals displayed in both plots are valid simultaneously!
+
 
 Compute the empirical mean for each segment in the true segmentation, and add it to the previous plot
 
@@ -59,49 +96,6 @@ seg_means <- matrixStats::binMeans(Y, x = seq(along = Y), bx = bx)
 plot(posirCI)
 for(i in 1:K) abline(v=true_bkp[i]+0.5, col="blue")
 for(i in 1:(K+1)) lines(c(bx[i],bx[i+1]), rep(seg_means[i],2), col="blue")
-```
-
-Comparison with a basic splitting technique : the observations in even position are used to select the segmentation, those in odd position to calculate the confidence intervals. If $k$ is the (potentially random) number of regions in the final segmentation, the confidence interval for the average value of $\mu$ in the region $I$ will have as radius $q_\hat{\sigma}/\sqrt{\ell(I)/2}$, where $\ell(I)$ is the length of $I$, the "/2" is due to the fact that only half of the observations are used, and $q$ is the Gaussian quantile of level $1-\alpha/(2k)$ (Bonferroni’s rule). We compare with the radius of POSIR confidence intervals $K_{1-\alpha,\delta} \hat{\sigma}/\sqrt{\ell(I)}$:
-
-```{r comparison with Splitting+Bonferroni}
-aux = function(k,p=0.95,delta=0.1) {
-  return(sqrt(2)*qnorm(1-(1-p)/(2*k))/qposir(p,delta))
-}
-aux(1:10)
-```
-
-We see that for $\delta=0.1$ and a confidence rate of $95\%$, the POSIR method begins to be better as soon as the segmentation includes 7 cuts.
-
-However, using the independence of observations, the different ICs are conditional independent to segmentation, and we can instead take the quantile of order $(1+\sqrt[k]{p})/2$:
-
-```{r comparison with Splitting+conditional independence}
-aux = function(k,p=0.95,delta=0.1) {
-  return(sqrt(2)*qnorm((1+p^(1/k))/2)/qposir(p,delta))
-}
-aux(1:10)
-```
-
-Not much of a difference.
-
-What if $\delta$ is chosen depending on the maximal number $K$ of intervals in the segmentation, for instance $\delta=\frac{1}{2 K}$?
-
-```{r linking K and delta}
-aux = function(k,p=0.95) {
-  return(sqrt(2)*qnorm(1-(1-p)/(2*k))/qposir(p,1/(2*k)))
-}
-plot(1:100,aux(1:100),type="l")
-```
-
-```{r comparisons of quantiles for fixed K}
-aux = function(c,k,p=0.95) {
-  return(sqrt(2)*qnorm(1-(1-p)/(2*k))/qposir(p,c/k))
-}
-par(mfrow=c(2,2))
-for(k in c(5,10,20,50)) {
-  c=seq(from=k*.005, to=1, length.out=101)
-  plot(c,aux(c,k),type="l", main=paste("Quantiles ratio for delta=c/K, with K =",toString(k)), 
-       xlab = "c", ylab = "ratio")
-}
 ```
 
 ## References
