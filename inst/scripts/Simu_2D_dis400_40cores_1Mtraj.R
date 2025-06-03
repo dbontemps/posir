@@ -1,44 +1,39 @@
 
-# Paramètres
-
-## Paramètres généraux
+## general parameters
 
 dimension = 2
 sim_path="Simulations"
-Taillemaxbatch = 4*10**6 # max 4*10^6 sur mon PC portable ? 10^8 chez moi (avec 24Go de RAM)
+maxbatchsize = 4*10**6
 
-## Paramètres de simulations des trajectoires
+## parameters for trajectories simulation
 
-Ndiscretisation = 400 # max 2000 sur mon PC portable, 10^4 sur mon PC fixe perso
-grilledelta = seq(100,1,-1)/100 # en ordre décroissant, valeur 1 permise
+Ndiscretisation = 400
+deltagrid = seq(100,1,-1)/100 # decreasing order
 
-## Paramètres de simulation des quantiles
+## Parameters for simulation quantiles estimation
 
 Ntraj_batch = 500
-grillealpha = seq(500,1,-1)/1000
+alphagrid = seq(500,1,-1)/1000
 
-## Paramètres des estimations Monte-carlo
+## Parameters of Monte-carlo estimations
 
 Ncores = 40
 Ntrajmin = 10^6
 
-## Paramètres de nommage des fichiers
+## File names parameters
 
-Nomgrilledelta = "1to.01by.01"
-#BaseNomQuantile = "Table_quantiles_1Mtraj.txt"
+Namedeltagrid = "1to.01by.01"
 
-## Fichier quantile utilisé pour le calcul des niveaux effectifs, si différent
-
-# Chargement des fonctions
+# library loading
 
 library(posir)
 library(future)
 logger::log_threshold(logger::DEBUG, namespace = "posir")
 
-# Exécutions
+# Exec
 
 plan(multisession, workers = Ncores)
-compute_quantiles(Ntrajmin, Ntraj_batch, Ndiscretisation, grilledelta,
-                  Nomgrilledelta, grillealpha, Taillemaxbatch, sim_path,
+compute_quantiles(Ntrajmin, Ntraj_batch, Ndiscretisation, deltagrid,
+                  Namedeltagrid, alphagrid, maxbatchsize, sim_path,
                   d=dimension)
 plan(sequential)
