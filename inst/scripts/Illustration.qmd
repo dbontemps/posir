@@ -61,38 +61,38 @@ for(i in 1:K) abline(v=true_bkp[i]+0.5, col="blue")
 for(i in 1:(K+1)) lines(c(bx[i],bx[i+1]), rep(seg_means[i],2), col="blue")
 ```
 
-Comparaison avec une technique basique de découpage des données en 2 datasets : les observations en position paire servent à sélectionner la segmentation, ceux en position impaire à calculer les intervalles de confiance. Si $k$ est le nombre (potentiellement aléatoire) de régions dans la segmentation finale, l'intervalle de confiance pour la valeur moyenne de $\mu$ dans la région $I$ aura pour rayon $q \hat{\sigma}/\sqrt{\ell(I)/2}$, où $\ell(I)$ est la longueur de $I$, le "/2" vient du fait que l'on n'utilise que la moitié des observations, et le $q$ est le quantile gaussien de niveau $1-\alpha/(2k)$ (règle de Bonferroni). Comparons avec le rayon POSIR $K_{\alpha,\delta} \hat{\sigma}/\sqrt{\ell(I)}$ :
+Comparison with a basic splitting technique : the observations in even position are used to select the segmentation, those in odd position to calculate the confidence intervals. If $k$ is the (potentially random) number of regions in the final segmentation, the confidence interval for the average value of $\mu$ in the region $I$ will have as radius $q_\hat{\sigma}/\sqrt{\ell(I)/2}$, where $\ell(I)$ is the length of $I$, the "/2" is due to the fact that only half of the observations are used, and $q$ is the Gaussian quantile of level $1-\alpha/(2k)$ (Bonferroni’s rule). We compare with the radius of POSIR confidence intervals $K_{1-\alpha,\delta} \hat{\sigma}/\sqrt{\ell(I)}$:
 
-```{r comparaison avec Bonferroni}
+```{r comparison with Splitting+Bonferroni}
 aux = function(k,p=0.95,delta=0.1) {
   return(sqrt(2)*qnorm(1-(1-p)/(2*k))/qposir(p,delta))
 }
 aux(1:10)
 ```
 
-On voit que pour $\delta=0.1$ et un taux de confiance de $95\%$, la méthode POSIR commence à être meilleure dès que la segmentation inclut 7 coupures.
+We see that for $\delta=0.1$ and a confidence rate of $95\%$, the POSIR method begins to be better as soon as the segmentation includes 7 cuts.
 
-Cependant, en utilisant l'indépendance des observations, les différents IC sont indépendants conditionnellement à la segmentation, et on peut plutôt prendre le quantile d'ordre $(1+\sqrt[k]{p})/2$ :
+However, using the independence of observations, the different ICs are conditional independent to segmentation, and we can instead take the quantile of order $(1+\sqrt[k]{p})/2$:
 
-```{r comparaison avec indépendance conditionnelle des IC}
+```{r comparison with Splitting+conditional independence}
 aux = function(k,p=0.95,delta=0.1) {
   return(sqrt(2)*qnorm((1+p^(1/k))/2)/qposir(p,delta))
 }
 aux(1:10)
 ```
 
-Ça ne fait pas vraiment de différence.
+Not much of a difference.
 
-Que se passe-t-il si $\delta$ est choisi en fonction du $K$ maximal, par exemple $\delta=\frac{1}{2 K}$ ?
+What if $\delta$ is chosen depending on the maximal number $K$ of intervals in the segmentation, for instance $\delta=\frac{1}{2 K}$?
 
-```{r lien entre K et delta}
+```{r linking K and delta}
 aux = function(k,p=0.95) {
   return(sqrt(2)*qnorm(1-(1-p)/(2*k))/qposir(p,1/(2*k)))
 }
 plot(1:100,aux(1:100),type="l")
 ```
 
-```{r comparaisons de quantiles pour K fixe}
+```{r comparisons of quantiles for fixed K}
 aux = function(c,k,p=0.95) {
   return(sqrt(2)*qnorm(1-(1-p)/(2*k))/qposir(p,c/k))
 }
@@ -109,4 +109,4 @@ for(k in c(5,10,20,50)) {
 Pierre-Jean, M., Rigaill, G., & Neuvial, P. (2015). Performance evaluation of DNA copy number segmentation methods. Briefings in bioinformatics, 16(4), 600-615.
 https://pubmed.ncbi.nlm.nih.gov/25202135/
 
-(Ajouter papier BaBoNe)
+Bontemps, D., Bachoc, F., & Neuvial, P. (2025). Inference post region selection. Preprint.
