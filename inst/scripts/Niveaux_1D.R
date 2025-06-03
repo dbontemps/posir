@@ -5,7 +5,7 @@
 ## Paramètres généraux
 
 dimension = 1
-sim_path="Simulations"
+sim_path = "Simulations"
 Taillemaxbatch = 5*10**6
 
 ## Paramètres de simulations des trajectoires pour les quantiles
@@ -17,7 +17,7 @@ grillealpha = seq(500,1,-1)/1000
 
 ## Paramètres des estimations Monte-carlo
 
-Ncores = 40
+Ncores = 4
 Ntrajmin = 10^6
 
 ## Paramètres de nommage des fichiers
@@ -56,8 +56,9 @@ for(j in c(30, 50, 100, 400, 1000, 5000)) {
 }
 plan(sequential)
 
-for(j in c(30, 50, 100, 400, 1000, 5000, 10000, 20000)) {
-  myfun(n = j, positions = seq(1,181,20),
+# for(j in c(30, 50, 100, 400, 1000, 5000, 10000, 20000)) {
+for(j in c(30, 50, 100, 400, 1000, 5000)) {
+    myfun(n = j, positions = seq(1,181,20),
         Nomgrilledeltafin = "1to.1by.1",
         rdistrib = function(k) {
           return(EnvStats::rpareto(k, location=1, shape=2.1) - (2.1/(2.1-1)))
@@ -74,6 +75,14 @@ for(j in c(30, 50, 100, 400)) {
         Nomgrilledeltafin = "1to.1by.1",
         rdistrib = rlaplace, NameDis = "Laplace")
 }
+
+# Idem avec une distribution de Gauss
+for(j in c(30, 50, 100, 400)) {
+  myfun(n = j, positions = seq(1,181,20),
+        Nomgrilledeltafin = "1to.1by.1",
+        rdistrib = rnorm, NameDis = "Gauss")
+}
+
 
 # Pareto symétrisé avec discrétisation 100
 # xm=1

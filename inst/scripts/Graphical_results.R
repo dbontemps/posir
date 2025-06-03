@@ -70,6 +70,21 @@ p <- plot_levels(Y, alphagrid, "n",
             filename)
 ggsave(p, filename = filename, height = 4, width = 6) #, height = 4, width = 6
 
+alphagrid <- c(0.5, 0.1, 0.05, 0.01, 0.001)
+deltagrid <- (1:10)/10
+prename = "Simulations/1D_Discretization_"
+sufname = "_Gauss_grid_1to.1by.1/Table_niveaux_effectifs.txt"
+preIname = "effective-confidence-level_"
+ExtI = ".png"
+
+filename = paste(preIname, "Gauss", ExtI, sep="")
+Y = read_levels(prename, sufname, c(30, 50, 100, 400), alphagrid, deltagrid)
+p <- plot_levels(Y, alphagrid, "n",
+                 "Gauss for various n",
+                 filename)
+ggsave(p, filename = filename, height = 4, width = 6) #, height = 4, width = 6
+
+
 sufname = "_Pareto2.1_grid_1to.1by.1/Table_niveaux_effectifs.txt"
 filename = paste(preIname, "centered-Pareto_2.1", ExtI, sep="")
 Y = read_levels(prename, sufname,
