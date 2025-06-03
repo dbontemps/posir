@@ -2,7 +2,14 @@
 # splitting:
 # - observations with even index are used to obtain segmentation
 # - observations with odd index are use to build confidence intervals
-# see POSIR paper for additional details.
+
+#  If $k$ is the (potentially random) number of regions in the final
+#  segmentation, the confidence interval for the average value of $\mu$ in the
+#  region $I$ will have as radius $q_\hat{\sigma}/\sqrt{\ell(I)/2}$, where
+#  $\ell(I)$ is the length of $I$, the "/2" is due to the fact that only half of
+#  the observations are used, and $q$ is the Gaussian quantile of level
+#  $1-\alpha/(2k)$ (Bonferroni’s rule). We compare with the radius of POSIR
+#  confidence intervals $K_{1-\alpha,\delta} \hat{\sigma}/\sqrt{\ell(I)}$:
 
 
 seq_k <- c(5, 10, 20, 50)
