@@ -114,6 +114,9 @@ new_posir1DCI <- function() { return(posir1DCI(0,numeric(),NULL,0,0)) }
 #' Plot the 1D confidence intervals obtained by POSIR method.
 #'
 #' @param x a posir1DCI object.
+
+#' @param box a boolean value. If TRUE, the confidence interval is displayed as
+#'   a semi-transparent box. Else, it is displayed as a pair of lines.
 #' @inheritParams base::plot
 #' @seealso [posir1DCI()]
 #'
@@ -125,7 +128,7 @@ new_posir1DCI <- function() { return(posir1DCI(0,numeric(),NULL,0,0)) }
 #' bkp=c(10,20)
 #' y=confidence_intervals_1D(x,bkp,.1,.005)
 #' plot(y)
-plot.posir1DCI <- function(x,...) {
+plot.posir1DCI <- function(x, box=FALSE, ...) {
   if(!validate_posir1DCI(x))
     log_n_stop("Invalid arguments in plot.posir1DCI().")
   n=length(x$data)
@@ -133,18 +136,25 @@ plot.posir1DCI <- function(x,...) {
   aux_bkp=c(0, x$breakpoints, n)
   plotmeans=!is.null(x$means)
   plot(1:n,x$data,main="Simultaneous confidence intervals for the means",
-       xlab="", ylab="",
-       col = "#33333333", pch = 19, cex = 0.3,
+       col = "#33333333", pch = 19, cex = 0.5,
        ...)
-  for(i in 1:(l-1)) abline(v=x$breakpoints[i]+.5, col="red")
+  CI_col <- "#FF0000"
+  CI_col_alpha <- paste(CI_col, "50", sep = "")
+  for(i in 1:(l-1)) abline(v=x$breakpoints[i]+.5, col=CI_col)
   for(i in 1:l) {
     xx=c(aux_bkp[i]+.5,aux_bkp[i+1]+.5)
-    if(plotmeans) lines(xx, rep(x$means[i],2), col="red")
+    if(plotmeans) lines(xx, rep(x$means[i],2), col=CI_col)
     if(!is.na(x$lbs[i])) {
-      lines(xx, rep(x$lbs[i],2),
-            col="red", lty=2)
-      lines(xx, rep(x$ubs[i],2),
-            col="red", lty=2)
+      if (box) {
+        rect(xx[1], x$lbs[i], xx[2], x$ubs[i],
+             border = CI_col,
+             col = CI_col_alpha)
+      } else {
+        lines(xx, rep(x$lbs[i],2),
+              col=CI_col, lty=2)
+        lines(xx, rep(x$ubs[i],2),
+              col=CI_col, lty=2)
+      }
     }
   }
 }
