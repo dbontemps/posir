@@ -17,7 +17,7 @@ res$L <- as.factor(res$k)
 library("ggplot2")
 p <- ggplot(res, aes(x = c, y = ratio, colour = L, group = L)) +
   geom_line() +
-  geom_line(y = 1, linetype = "dashed") +
+  geom_hline(yintercept = 1, linetype = "dashed", color = "darkgray") +
   theme(legend.position = c(0.9, 0.3)) +
   labs(title = expression(paste("Quantile ratios for ", delta, " = c/L"))) +
   guides(color = guide_legend(reverse = TRUE))
