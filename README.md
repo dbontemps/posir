@@ -13,7 +13,7 @@
 
 `posir` is a help package to compute simulations in the framework
 defined in the preprint “Inference post region selection” by Bontemps,
-Bachoc, and Neuvial, 2025.
+Bachoc, and Neuvial, 2025. https://arxiv.org/abs/2506.11564
 
 ## What is it exactly for?
 
