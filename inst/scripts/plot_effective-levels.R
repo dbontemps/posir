@@ -1,23 +1,18 @@
-
 library("rlist")
 library("ggplot2")
 ggplot2::theme_set(theme_minimal())
 library("xtable")
 
-print_quantiles = function(filename) {
-  alphagrid <- c(0.5, 0.2, 0.1, 0.05, 0.01, 0.005, 0.001)
-  deltagrid <- seq(10, 1, -1)/10
-  myrownames = sapply(alphagrid, toString)
-  mycolnames = sapply(deltagrid, function(x){paste("X",toString(x),sep="")})
-  X = read.table(filename)
-  X = X[myrownames, mycolnames]
-  colnames(X) = deltagrid
-  print(xtable(X,digits=3))
-}
+alphas <- c(0.5, 0.2, 0.1, 0.05, 0.01, 0.005, 0.001)
+deltas <- 10:1/10
+dimension <- 1
 
-path <- system.file("extdata", package = "posir")
-print_quantiles(file.path(path, "Table_quantiles_1D.txt"))
-print_quantiles(file.path(path, "Table_quantiles_2D.txt"))
+quantiles_1d <- sapply(deltas, FUN = function(delta) qposir(1 - alphas, delta,
+                                                            d = 1))
+
+quantiles_2d <- sapply(deltas, FUN = function(delta) qposir(1 - alphas, delta,
+                                                            d = 2))
+
 
 read_levels = function(prename, sufname, criterion, alphagrid, deltagrid) {
   myY = list()
@@ -66,7 +61,7 @@ ExtI = ".png"
 filename = paste(preIname, "Laplace", ExtI, sep="")
 Y = read_levels(prename, sufname, c(30, 50, 100, 400), alphagrid, deltagrid)
 p <- plot_levels(Y, alphagrid, "n",
-            "Laplace for various n",
+            NULL,
             filename)
 ggsave(p, filename = filename, height = 4, width = 6) #, height = 4, width = 6
 
@@ -80,7 +75,7 @@ ExtI = ".png"
 filename = paste(preIname, "Gauss", ExtI, sep="")
 Y = read_levels(prename, sufname, c(30, 50, 100, 400), alphagrid, deltagrid)
 p <- plot_levels(Y, alphagrid, "n",
-                 "Gauss for various n",
+                 NULL,
                  filename)
 ggsave(p, filename = filename, height = 4, width = 6) #, height = 4, width = 6
 
@@ -91,8 +86,8 @@ Y = read_levels(prename, sufname,
                 c(30, 50, 100, 400, 1000, 5000, 10000, 20000, 50000),
                 alphagrid, deltagrid)
 p <- plot_levels(Y, alphagrid, "n",
-            "Centered Pareto of shape 2.1 for various n",
-            filename)
+                 NULL,
+                 filename)
 ggsave(p, filename = filename, height = 4, width = 6) #, height = 4, width = 6
 
 sufname = "_Pareto3_grid_1to.1by.1/Table_niveaux_effectifs.txt"
@@ -100,8 +95,8 @@ filename = paste(preIname, "centered-Pareto_3", ExtI, sep="")
 Y = read_levels(prename, sufname, c(30, 50, 100, 400, 1000, 5000),
                 alphagrid, deltagrid)
 p <- plot_levels(Y, alphagrid, "n",
-            "Centered Pareto of shape 3 for various n",
-            filename)
+                 NULL,
+                 filename)
 ggsave(p, filename = filename, height = 4, width = 6) #, height = 4, width = 6
 
 prename = "1D_Discretization_100_Pareto"
@@ -110,8 +105,8 @@ filename = paste(preIname, "n100_centered-Paretos", ExtI, sep="")
 Y = read_levels(prename, sufname, c(2.1, 2.4, 3, 4, 10),
                 alphagrid, deltagrid)
 p <- plot_levels(Y, alphagrid, "Pareto shape",
-            "Centered Pareto with n = 100 for various shapes",
-            filename)
+                 NULL,
+                 filename)
 ggsave(p, filename = filename, height = 4, width = 6) #, height = 4, width = 6
 
 prename = "2D_Discretization_"
@@ -120,6 +115,6 @@ filename = "2D_effective-confidence-level_centered-Pareto_3.png"
 Y = read_levels(prename, sufname, c(50, 100, 200, 400),
                 alphagrid, deltagrid)
 p <- plot_levels(Y, alphagrid, "n",
-            "2D centered Pareto of shape 3 for various n",
-            filename)
+                 NULL,
+                 filename)
 ggsave(p, filename = filename, height = 4, width = 6) #, height = 4, width = 6
