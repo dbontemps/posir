@@ -1,3 +1,6 @@
+## Currently the required files are available in inst/extdata/results.zip
+## https://github.com/dbontemps/posir/blob/main/inst/extdata/results.zip
+## they should be unzipped in a "Simulations" folder in order to run the code below
 library("rlist")
 library("ggplot2")
 ggplot2::theme_set(theme_minimal())
@@ -9,7 +12,6 @@ dimension <- 1
 
 quantiles_1d <- sapply(deltas, FUN = function(delta) qposir(1 - alphas, delta,
                                                             d = 1))
-
 quantiles_2d <- sapply(deltas, FUN = function(delta) qposir(1 - alphas, delta,
                                                             d = 2))
 
@@ -40,12 +42,14 @@ plot_levels = function(Y, alphagrid, critname, title, filename) {
   p <- ggplot(level, aes(x = delta, y = level, group = crit, color = crit)) +
     geom_line() +
     geom_hline(aes(yintercept = y), targets, linetype = "dotted") +
-    facet_wrap(vars(alpha), labeller = label_both, scales = "free") +
+    facet_wrap(vars(alpha), labeller = as_labeller(
+      ~ paste0("alpha:", .x), label_parsed),
+      scales = "free") +
     theme(legend.position = c(0.8, 0.2)) +
     scale_colour_brewer(palette = "Purples") +
     scale_y_log10() +
     labs(title = title,
-         x = "delta",
+         x = expression(delta),
          y = "Effective error level",
          color = critname)
   p
@@ -65,31 +69,23 @@ p <- plot_levels(Y, alphagrid, "n",
             filename)
 ggsave(p, filename = filename, height = 4, width = 6) #, height = 4, width = 6
 
+
 alphagrid <- c(0.5, 0.1, 0.05, 0.01, 0.001)
 deltagrid <- (1:10)/10
 prename = "Simulations/1D_Discretization_"
-sufname = "_Gauss_grid_1to.1by.1/Table_niveaux_effectifs.txt"
-preIname = "effective-confidence-level_"
-ExtI = ".png"
-
-filename = paste(preIname, "Gauss", ExtI, sep="")
-Y = read_levels(prename, sufname, c(30, 50, 100, 400), alphagrid, deltagrid)
-p <- plot_levels(Y, alphagrid, "n",
-                 NULL,
-                 filename)
-ggsave(p, filename = filename, height = 4, width = 6) #, height = 4, width = 6
-
-
 sufname = "_Pareto2.1_grid_1to.1by.1/Table_niveaux_effectifs.txt"
 filename = paste(preIname, "centered-Pareto_2.1", ExtI, sep="")
 Y = read_levels(prename, sufname,
-                c(30, 50, 100, 400, 1000, 5000, 10000, 20000, 50000),
+                c(30, 50, 100, 400, 1000, 5000, 50000),
                 alphagrid, deltagrid)
 p <- plot_levels(Y, alphagrid, "n",
                  NULL,
                  filename)
 ggsave(p, filename = filename, height = 4, width = 6) #, height = 4, width = 6
 
+alphagrid <- c(0.5, 0.1, 0.05, 0.01, 0.001)
+deltagrid <- (1:10)/10
+prename = "Simulations/1D_Discretization_"
 sufname = "_Pareto3_grid_1to.1by.1/Table_niveaux_effectifs.txt"
 filename = paste(preIname, "centered-Pareto_3", ExtI, sep="")
 Y = read_levels(prename, sufname, c(30, 50, 100, 400, 1000, 5000),
@@ -99,7 +95,9 @@ p <- plot_levels(Y, alphagrid, "n",
                  filename)
 ggsave(p, filename = filename, height = 4, width = 6) #, height = 4, width = 6
 
-prename = "1D_Discretization_100_Pareto"
+alphagrid <- c(0.5, 0.1, 0.05, 0.01, 0.001)
+deltagrid <- (1:10)/10
+prename = "Simulations/1D_Discretization_100_Pareto"
 sufname = "_grid_1to.1by.1/Table_niveaux_effectifs.txt"
 filename = paste(preIname, "n100_centered-Paretos", ExtI, sep="")
 Y = read_levels(prename, sufname, c(2.1, 2.4, 3, 4, 10),
@@ -109,7 +107,7 @@ p <- plot_levels(Y, alphagrid, "Pareto shape",
                  filename)
 ggsave(p, filename = filename, height = 4, width = 6) #, height = 4, width = 6
 
-prename = "2D_Discretization_"
+prename = "Simulations/2D_Discretization_"
 sufname = "_Pareto3_grid_1to.1by.1/Table_niveaux_effectifs.txt"
 filename = "2D_effective-confidence-level_centered-Pareto_3.png"
 Y = read_levels(prename, sufname, c(50, 100, 200, 400),
